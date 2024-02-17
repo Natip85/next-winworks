@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  firstName      String?
+  lastName       String?
+  name           String?
+  email          String? @unique
+  phone          String?
+  ordersCount    Int?
+  hashedPassword String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  emailVerified  DateTime?
+  accounts       Account[]
+  addresses      Addresses[]
+  orders         Orders[]
+  image          String?
+  role           Role      @default(USER)
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+  userId            String  @db.ObjectId
+  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
+
+model Product {
+  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  available             Boolean
+  collections           Collection[]
+  comparePriceAt        Int
+  createdAt             DateTime @default(now())
+  description           String
+  images                Image[]
+  options               ProductOptions[]
+  price                 Int
+  productCategory       String
+  productType           String
+  sku                   String
+  status                String
+  taxable               Boolean
+  title                 String
+  totalInventory        Int
+  totalVariants         Int
+  weight                Int
+  weightUnit            String
+  variants              Variant[]
+}
+
+model Variant {
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  title             String
+  price             Int
+  comparePriceAt    Int
+  available         Boolean
+  featuredImage     Image?
+  images            Image[]
+  options           VariantOptions[]
+  requiresShipping  Boolean
+  sku               String
+  weight            Int
+  weightUnit        String
+  inventoryQuantity Int
+  createdAt             DateTime @default(now())
+  parentId          String  @db.ObjectId
+  product           Product? @relation(fields: [parentId], references: [id], onDelete: Cascade)
+}
+
+type ProductOptions {
+  name              String
+  values             String[]
+ 
+}
+type VariantOptions {
+  name              String
+  value             String
+ 
+}
+
+type Collection {
+  id                   Int
+  title                String
+  allProductsCount     Int
+  allTypes             String[]
+  description          String
+  featuredImage        Image
+  createdAt            DateTime  @default(now())
+}
+
+model Orders {
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt         DateTime @default(now())
+  billingAddress    Addresses
+  email             String 
+  fulfillmentStatus FulfillmentStatusLabel @default(UNFULFILLED)
+  itemCount         Int
+  shippingAddress   Addresses
+  shippingPrice     Int
+  subtotalPrice     Int
+  taxPrice          Int
+  totalDiscounts    Int?
+  totalNetAmount    Int
+  totalPrice        Int
+  userId            String @db.ObjectId
+  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+type Addresses {
+  address1          String
+  address2          String 
+  city              String
+  country           String
+  countryCode       String
+  firstName         String
+  lastName          String
+  fullName          String
+  phone             String
+  street            String
+  userId            String
+}
+
+type Image {
+  key              String
+  name             String
+  url              String
+  size             Int
+  serverData       ServerData
+}
+type ServerData {
+  uploadedBy String    
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum FulfillmentStatusLabel {
+  COMPLETE  
+  FULFILLED
+  PARTIAL
+  RESTOCKED
+  UNFULFILLED 
+}
+
+
+
+
+
+
+
+
+
+
+
+
