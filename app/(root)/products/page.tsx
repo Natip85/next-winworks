@@ -1,10 +1,10 @@
-// import getProducts from "@/actions/getProducts";
-// import ProductTable from "@/components/tables/ProductTable";
+import getProducts from "@/actions/getProducts";
+import ProductTable from "@/components/table/ProductTable";
 import Link from "next/link";
-// import { columns } from "../../../components/tables/ProductColumns";
+import { columns } from "@/components/table/ProductColumns";
 
 const Products = async () => {
-  // const products = await getProducts();
+  const products = await getProducts();
 
   return (
     <div>
@@ -18,7 +18,7 @@ const Products = async () => {
         </Link>
       </div>
       product table
-      {/* <ProductTable columns={columns} data={products} /> */}
+      <ProductTable columns={columns} data={products} />
     </div>
   );
 };

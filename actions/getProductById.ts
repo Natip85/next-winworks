@@ -2,11 +2,11 @@ import prismadb from "@/lib/prismadb";
 import { ObjectId } from "mongodb";
 
 export const getProductById = async (productId: string) => {
-  const newHotelId = new ObjectId().toHexString();
+  const newProductId = new ObjectId().toHexString();
   try {
     const product = await prismadb.product.findUnique({
       where: {
-        id: productId === "new" ? newHotelId : productId,
+        id: productId === "new" ? newProductId : productId,
       },
       include: {
         variants: true,

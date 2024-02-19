@@ -28,4 +28,9 @@ export const createProductSchema = z.object({
       })
     )
     .optional(),
+  options: z.array(
+    z.object({
+      name: z.string().min(1, { message: "Option name is required" }),
+    })
+  ),
 });

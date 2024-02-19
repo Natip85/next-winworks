@@ -5,55 +5,38 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
+    // Extract options from the request body
+    const { options, ...productData } = body;
+
+    // Create a product using the remaining data
     const product = await prismadb.product.create({
       data: {
-        ...body,
+        ...productData,
+        options: options,
       },
     });
 
-    const productOptions = body.options;
-    console.log(productOptions);
-    const generateVariants = (productOptions: any) => {
-      const variants: any = [];
-      const optionValues = productOptions.map((option: any) => option.values);
-
-      const generateCombinations = (index: any, combination: any) => {
-        if (index === optionValues.length) {
-          variants.push({
-            title: `${product.title} - ${combination.join(" - ")}`,
-            options: productOptions.map((option: any, i: any) => ({
-              name: option.name,
-              value: combination[i],
-            })),
-            price: 0,
-            comparePriceAt: 0,
-            available: product.available,
-            requiresShipping: true,
-            sku: "",
-            weight: 0,
-            weightUnit: "lb",
-            inventoryQuantity: 0,
-          });
-          return;
-        }
-        for (const value of optionValues[index]) {
-          generateCombinations(index + 1, [...combination, value]);
-        }
-      };
-
-      generateCombinations(0, []);
-      return variants;
-    };
-    const variants = generateVariants(productOptions);
-
-    for (const variant of variants) {
-      await prismadb.variant.create({
+    // Create a variant for each option
+    const variantPromises = options.map(async (option: { name: string }) => {
+      return prismadb.variant.create({
         data: {
-          ...variant,
+          title: option.name,
+          price: 0,
+          comparePriceAt: 0,
+          available: product.available,
+          images: undefined,
+          requiresShipping: product.requiresShipping,
+          sku: "",
+          weight: 0,
+          weightUnit: "lb",
+          inventoryQuantity: 0,
           parentId: product.id,
         },
       });
-    }
+    });
+
+    // Wait for all variant creations to complete
+    await Promise.all(variantPromises);
 
     return NextResponse.json(product);
   } catch (error) {

@@ -3,7 +3,7 @@ import * as z from "zod";
 import { createProductSchema } from "@/validations/createProduct";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image as prisImg, Product, Variant } from "@prisma/client";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -22,7 +22,9 @@ import {
   Loader2Icon,
   Pencil,
   PencilLine,
+  Plus,
   Trash2,
+  Trash2Icon,
   XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -38,6 +40,7 @@ import {
 } from "../ui/select";
 import {
   cn,
+  formatPrice,
   productCategories,
   ProductStatus,
   productStatuses,
@@ -73,16 +76,104 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { AddVariant } from "./AddVariant";
 
 interface AddProductFormProps {
   product: ProductWithVariants | null;
+  variants?: any;
 }
 export type ProductWithVariants = Product & {
   variants: Variant[];
 };
 
-const AddProductForm = ({ product }: AddProductFormProps) => {
+const AddProductForm = ({ product, variants }: AddProductFormProps) => {
+  const useDynamicForm = () => {
+    const form = useForm<z.infer<typeof createProductSchema>>({
+      resolver: zodResolver(createProductSchema),
+      defaultValues: product || {
+        images: undefined,
+        taxable: true,
+        weightUnit: WeightUnits.LB,
+        status: ProductStatus.DRAFT,
+        comparePriceAt: 0,
+        description: "",
+        price: 0,
+        productCategory: "",
+        productType: "",
+        sku: "",
+        totalInventory: 0,
+        weight: 0,
+        options: [],
+      },
+    });
+    function onSubmit(values: z.infer<typeof createProductSchema>) {
+      const finalData = {
+        ...values,
+        available: values.status === "Draft" ? false : true,
+        collections: [],
+        requiresShipping: shipping,
+        totalVariants: product?.variants?.length || 0,
+      };
+
+      setIsLoading(true);
+      if (product) {
+        // update
+        axios
+          .patch(`/api/product/${product.id}`, finalData)
+          .then((res) => {
+            toast({
+              variant: "success",
+              description: "Product updated",
+            });
+
+            setIsLoading(false);
+            router.push(`/products/${res.data.id}`);
+            router.refresh();
+          })
+          .catch((err) => {
+            console.log(err);
+            toast({
+              variant: "destructive",
+              description: "Something went wrong",
+            });
+            setIsLoading(false);
+          });
+      } else {
+        //create
+        axios
+          .post("/api/product", finalData)
+          .then((res) => {
+            toast({
+              variant: "success",
+              description: "Product created",
+            });
+            router.push(`/products/${res.data.id}`);
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            toast({
+              variant: "destructive",
+              description: "Something went wrong",
+            });
+            setIsLoading(false);
+          });
+      }
+    }
+    const { fields, append, remove } = useFieldArray({
+      control: form.control,
+      name: "options",
+    });
+
+    const handleRemove = (index: number) => {
+      remove(index);
+    };
+    const handleAppend = () => {
+      append({ name: "" });
+    };
+    return { form, fields, onSubmit, handleRemove, handleAppend };
+  };
+  const { fields, form, handleAppend, handleRemove, onSubmit } =
+    useDynamicForm();
   const router = useRouter();
   const pathname = usePathname();
   const { toast } = useToast();
@@ -92,27 +183,6 @@ const AddProductForm = ({ product }: AddProductFormProps) => {
   const [shipping, setShipping] = useState(true);
   const [open, setOpen] = useState(false);
   const [leave, setLeave] = useState(false);
-  const [variantValuesOne, setVariantValuesOne] = useState<string[]>([]);
-  const [variantValuesTwo, setVariantValuesTwo] = useState<string[]>([]);
-  const [variantTitleOne, setVariantTitleOne] = useState("");
-  const [variantTitleTwo, setVariantTitleTwo] = useState("");
-  const form = useForm<z.infer<typeof createProductSchema>>({
-    resolver: zodResolver(createProductSchema),
-    defaultValues: product || {
-      images: undefined,
-      taxable: true,
-      weightUnit: WeightUnits.LB,
-      status: ProductStatus.DRAFT,
-      comparePriceAt: 0,
-      description: "",
-      price: 0,
-      productCategory: "",
-      productType: "",
-      sku: "",
-      totalInventory: 0,
-      weight: 0,
-    },
-  });
 
   useEffect(() => {
     if (images && images.length > 0) {
@@ -124,77 +194,15 @@ const AddProductForm = ({ product }: AddProductFormProps) => {
     }
   }, [form, images]);
 
-  function onSubmit(values: z.infer<typeof createProductSchema>) {
-    console.log("ONSUBMITVALS>>>", values);
-
-    const finalData = {
-      ...values,
-      available: values.status === "Draft" ? false : true,
-      collections: [],
-      options: [
-        { name: variantTitleOne, values: variantValuesOne },
-        { name: variantTitleTwo, values: variantValuesTwo },
-      ],
-      totalVariants: product?.variants?.length || 0,
-    };
-    console.log("FINALDATA>>>", finalData);
-
-    setIsLoading(true);
-    if (product) {
-      // update
-      axios
-        .patch(`/api/product/${product.id}`, finalData)
-        .then((res) => {
-          toast({
-            variant: "success",
-            description: "Product updated",
-          });
-          router.push(`/products/${res.data.id}`);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          toast({
-            variant: "destructive",
-            description: "Something went wrong",
-          });
-          setIsLoading(false);
-        });
-    } else {
-      //create
-      axios
-        .post("/api/product", finalData)
-        .then((res) => {
-          toast({
-            variant: "success",
-            description: "Product created",
-          });
-          router.push(`/products/${res.data.id}`);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          toast({
-            variant: "destructive",
-            description: "Something went wrong",
-          });
-          setIsLoading(false);
-        });
-    }
-  }
-
   const handleImageDelete = (image: string) => {
     setImageIsDeleting(true);
-
     const imageKey = image.substring(image.lastIndexOf("/") + 1);
-
     axios
       .post("/api/uploadthing/delete", { imageKeys: [imageKey] })
       .then((res) => {
         if (res.data.success) {
           const updatedImages = images?.filter((img) => img.key !== imageKey);
           setImages(updatedImages);
-
           form.setValue("images", updatedImages, {
             shouldValidate: true,
             shouldDirty: true,
@@ -226,7 +234,6 @@ const AddProductForm = ({ product }: AddProductFormProps) => {
           description: "Product deleted",
         });
       });
-
       router.push("/products");
     } catch (error: any) {
       console.log(error);
@@ -239,7 +246,6 @@ const AddProductForm = ({ product }: AddProductFormProps) => {
     const imageKeys = product?.images.map((imgKey) => {
       return imgKey.key;
     });
-
     axios.post("/api/uploadthing/delete", { imageKeys: [imageKeys] });
   };
 
@@ -257,19 +263,6 @@ const AddProductForm = ({ product }: AddProductFormProps) => {
         router.push("/products");
       }
     }
-  };
-
-  const handleOnChangeOne = (value: any) => {
-    setVariantValuesOne(value);
-  };
-  const handleOnChangeTwo = (value: any) => {
-    setVariantValuesTwo(value);
-  };
-  const handleOptTitleOne = (value: string) => {
-    setVariantTitleOne(value);
-  };
-  const handleOptTitleTwo = (value: string) => {
-    setVariantTitleTwo(value);
   };
   return (
     <div>
@@ -349,7 +342,7 @@ const AddProductForm = ({ product }: AddProductFormProps) => {
                   control={form.control}
                   name="description"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="mt-2">
                       <FormLabel>Product description</FormLabel>
                       <FormControl>
                         <Textarea {...field} rows={10} />
@@ -640,90 +633,140 @@ const AddProductForm = ({ product }: AddProductFormProps) => {
 
               <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
                 <h2 className="font-semibold mb-3">Variants</h2>
-                <AddVariant
-                  valueOne={variantValuesOne}
-                  valueTwo={variantValuesTwo}
-                  onChangeOne={handleOnChangeOne}
-                  onChangeTwo={handleOnChangeTwo}
-                  product={product}
-                  titleOne={handleOptTitleOne}
-                  titleTwo={handleOptTitleTwo}
-                />
 
-                <div>
-                  <Accordion type="single" collapsible className="w-full ">
-                    <AccordionItem value="item-1">
-                      <AccordionTrigger className="hover:bg-gray-200 p-2">
-                        <div className="flex items-center justify-between w-full">
-                          <div className="flex gap-3 w-full">
-                            <div>
-                              <Image
-                                priority
-                                width={60}
-                                height={60}
-                                src={
-                                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTv2rNkxu82jwemyb3lSLkmbyLCqflQDMJPA&usqp=CAU"
-                                }
-                                alt="product title"
-                                className="rounded-md"
+                <div className="px-8 flex flex-col gap-3">
+                  {fields.map(({ id }, index) => (
+                    <FormField
+                      key={id}
+                      control={form.control}
+                      name={`options.${index}.name`}
+                      render={({ field }) => (
+                        <div className="flex justify-between items-center ">
+                          <FormItem className="w-full">
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="Add options like color or size..."
+                                className="h-[30px]"
                               />
-                            </div>
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                          <div>
+                            <Button
+                              variant={"outline"}
+                              type="button"
+                              onClick={() => handleRemove(index)}
+                              className="ml-5 h-[30px]"
+                            >
+                              <Trash2Icon className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    />
+                  ))}
+                  <div>
+                    <Button
+                      variant={"link"}
+                      type="button"
+                      onClick={handleAppend}
+                      className="text-sky-600 hover:text-sky-800 p-0"
+                    >
+                      <Plus className="h-4 w-4" />
+                      {fields.length === 0
+                        ? "Add an option like size or color"
+                        : "Add another option"}
+                    </Button>
+                  </div>
+                </div>
 
-                            <div>
-                              <div>title</div>
-                              <span className="text-sm font-normal text-muted-foreground">
-                                55555 variants
+                {product && product.variants.length > 0 && (
+                  <div>
+                    <Accordion type="single" collapsible className="w-full ">
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger className="hover:bg-gray-200 p-2">
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex gap-3 w-full">
+                              <div className="aspect-square overflow-hidden relative h-[70px] rounded-lg">
+                                <Image
+                                  fill
+                                  sizes="30"
+                                  src={
+                                    product.images[0]?.url ||
+                                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTv2rNkxu82jwemyb3lSLkmbyLCqflQDMJPA&usqp=CAU"
+                                  }
+                                  alt="product title"
+                                  className="object-cover"
+                                />
+                              </div>
+
+                              <div>
+                                <div>{product.title}</div>
+                                <span className="text-sm font-normal text-muted-foreground">
+                                  {product.variants.length} variants
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex gap-2 text-xs">
+                              <span className="text-xs text-muted-foreground">
+                                Total available {product.totalInventory}
                               </span>
                             </div>
                           </div>
-                          <div className="flex gap-2 text-xs">
-                            <span>total inventory</span>
-                            <span>available</span>
-                          </div>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="flex items-center gap-3">
-                          <div className="flex flex-col w-full">
-                            <div
-                              // onClick={() =>
-                              //   router.push(
-                              //     `/products/${product.id}/variants/${value.id}`
-                              //   )
-                              // }
-
-                              className="flex items-center justify-between gap-3 hover:bg-gray-200 hover:cursor-pointer p-1"
-                            >
-                              <div className="flex items-center gap-3 pl-6">
-                                <div>
-                                  <Image
-                                    priority
-                                    width={50}
-                                    height={50}
-                                    src={
-                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTv2rNkxu82jwemyb3lSLkmbyLCqflQDMJPA&usqp=CAU"
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          {product.variants.map((variant) => {
+                            return (
+                              <div
+                                key={variant.id}
+                                className="flex items-center gap-3"
+                              >
+                                <div className="flex flex-col w-full">
+                                  <div
+                                    onClick={() =>
+                                      router.push(
+                                        `/products/${product.id}/variants/${variant.id}`
+                                      )
                                     }
-                                    alt="prod alt"
-                                    className="rounded-md"
-                                  />
-                                </div>
-                                <div className="flex flex-col">
-                                  <span className="font-semibold">
-                                    name here
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    sku here
-                                  </span>
+                                    className="flex items-center justify-between gap-3 hover:bg-gray-200 hover:cursor-pointer p-1"
+                                  >
+                                    <div className="flex items-center gap-3 pl-6">
+                                      <div className="aspect-square overflow-hidden relative h-[55px] rounded-lg">
+                                        <Image
+                                          fill
+                                          sizes="30"
+                                          src={
+                                            variant?.images[0]?.url ||
+                                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTv2rNkxu82jwemyb3lSLkmbyLCqflQDMJPA&usqp=CAU"
+                                          }
+                                          alt="prod alt"
+                                          className="object-cover"
+                                        />
+                                      </div>
+                                      <div className="flex flex-col">
+                                        <span className="font-semibold">
+                                          {variant.title}
+                                        </span>
+                                        <span className="text-xs text-muted-foreground">
+                                          {variant.sku}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div>{formatPrice(variant.price)}</div>
+                                    <div className="text-xs text-muted-foreground">
+                                      {variant.inventoryQuantity} available
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-                              <div>$price</div>
-                            </div>
-                          </div>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </div>
+                            );
+                          })}
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </div>
+                )}
               </div>
             </div>
             <div className="flex flex-col w-full sm:w-[50%] lg:w-[35%]">

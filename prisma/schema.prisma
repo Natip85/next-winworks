@@ -55,6 +55,7 @@ model Product {
   price                 Int
   productCategory       String
   productType           String
+  requiresShipping      Boolean
   sku                   String
   status                String
   taxable               Boolean
@@ -74,7 +75,7 @@ model Variant {
   available         Boolean
   featuredImage     Image?
   images            Image[]
-  options           VariantOptions[]
+  // options           VariantOptions[]
   requiresShipping  Boolean
   sku               String
   weight            Int
@@ -87,14 +88,13 @@ model Variant {
 
 type ProductOptions {
   name              String
-  values             String[]
  
 }
-type VariantOptions {
-  name              String
-  value             String
+// type VariantOptions {
+//   name              String
+//   value             String
  
-}
+// }
 
 type Collection {
   id                   Int
