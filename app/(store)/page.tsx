@@ -25,13 +25,14 @@ export default function Home() {
       <div className="bg-gray-100">
         <div className="max-w-[1280px] mx-auto w-full grid grid-cols-1 lg:grid-cols-[488px_1fr] gap-4">
           <div className="gap-4 mt-6 mb-6 justify-center lg:justify-center items-center lg:items-start w-full flex flex-col px-4 md:px-8">
-            <span className="block relative overflow-hidden h-auto w-auto">
+            <span className="aspect-video block relative overflow-hidden h-[100px] w-auto">
               <Image
                 src={"/aura_logo-new-left.png"}
-                alt="logo"
-                width={250}
-                height={108}
+                alt="baby feeding"
                 priority
+                fill
+                sizes="(max-width: 768px) 100vw, 100vw"
+                className="transition-[scale,filter] duration-700"
               />
             </span>
             <span className="text-4xl  md:text-5xl  font-bold text-center md:text-left ">
@@ -225,12 +226,14 @@ export default function Home() {
                 key={index}
                 className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
               >
-                <div className="aspect-square overflow-hidden relative w-full">
+                <div className="aspect-square w-full relative overflow-hidden">
                   <Image
                     src={img}
-                    alt="slide images"
+                    alt="baby feeding"
+                    priority
                     fill
-                    className="object-cover w-[100%]"
+                    sizes="(max-width: 768px) 100vw, 100vw"
+                    className="transition-[scale,filter] duration-700"
                   />
                 </div>
               </CarouselItem>
