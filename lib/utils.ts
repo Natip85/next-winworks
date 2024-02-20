@@ -78,3 +78,8 @@ export const productCategories = [
   { label: "Religion", value: "religion" },
   { label: "Writing", value: "writing" },
 ];
+
+export const truncateText = (str: string) => {
+  if (str.length < 25) return str;
+  return str.substring(0, 25) + "...";
+};

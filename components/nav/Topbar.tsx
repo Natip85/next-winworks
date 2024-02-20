@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { User } from "lucide-react";
@@ -7,9 +5,10 @@ import Image from "next/image";
 import { TopbarNavMenu } from "./TopbarNavMenu";
 import SideDrawer from "../SideDrawer";
 import { useRouter } from "next/navigation";
+import getCurrentUser from "@/actions/getCurrentUser";
 
-const Topbar = () => {
-  const router = useRouter();
+const Topbar = async () => {
+  const currentUser = await getCurrentUser();
   return (
     <div className="sticky top-0 z-50 bg-white py-2 lg:py-4">
       <div className="mx-auto box-border flex w-full max-w-screen-xl items-center justify-between px-3 lg:px-8">
@@ -32,17 +31,28 @@ const Topbar = () => {
           </div>
         </nav>
         <div className="flex justify-between items-center gap-4">
-          <div>
-            <Button variant={"ghost"} className="p-0">
+          {currentUser ? (
+            <>
               <User />
-            </Button>
-          </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <Link href={"/auth"} className="p-0">
+                  <User />
+                </Link>
+              </div>
+            </>
+          )}
+
           <div>
             <Button variant={"ghost"} className="p-0">
               <SideDrawer />
             </Button>
           </div>
-          <Button onClick={() => router.push("/home")}>Go to admin</Button>
+          {currentUser?.role === "ADMIN" && (
+            <Link href={"/home"}>Go to admin</Link>
+          )}
         </div>
       </div>
     </div>

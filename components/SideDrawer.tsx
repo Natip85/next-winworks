@@ -18,7 +18,7 @@ const SideDrawer = () => {
         <ShoppingBag />
       </DrawerTrigger>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
+        <div className="mx-auto w-full max-w-sm flex flex-col justify-between">
           <DrawerHeader>
             <DrawerTitle className="flex items-center gap-3 justify-between">
               <div className="flex items-center gap-3">
@@ -31,7 +31,7 @@ const SideDrawer = () => {
               </DrawerClose>
             </DrawerTitle>
           </DrawerHeader>
-          <div className="p-4 pb-0">Put stuff here</div>
+          <div className="p-4 pb-0 ">Put stuff here</div>
           <DrawerFooter>
             <Button>Checkout</Button>
             <DrawerClose asChild>

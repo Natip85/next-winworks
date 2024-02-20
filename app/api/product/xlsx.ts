@@ -15,7 +15,6 @@ export function downloadToExcel(data: any) {
         { label: "Product Price", value: "price" },
       ],
       content: data.map((product: any) => ({
-        // Map over each product to include image URLs
         ...product,
         imageUrls: product.images.map((img: any) => img.url).join(", "), // Concatenate image URLs into a single string
       })),

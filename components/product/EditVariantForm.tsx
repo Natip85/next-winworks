@@ -285,10 +285,10 @@ const EditVariantForm = ({ variant, product }: EditVariantFormProps) => {
                               >
                                 <Image
                                   fill
+                                  sizes="30"
                                   src={img.url}
                                   alt="product image"
                                   className="rounded-md object-cover"
-                                  priority
                                 />
                                 <Button
                                   onClick={() => handleImageDelete(img.key)}
