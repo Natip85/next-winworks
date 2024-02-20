@@ -1,24 +1,24 @@
 import xlsx, { IJsonSheet } from "json-as-xlsx";
 
 export function downloadToExcel(data: any) {
-  console.log("DATA>>>", data);
-  const imgUrl = data.images.map((img: any) => {
-    return imgUrl.url;
-  });
   let columns: IJsonSheet[] = [
     {
       sheet: "Products",
       columns: [
         { label: "Product ID", value: "id" },
-        { label: "Product Image", value: "images" },
+        { label: "Product Image", value: "imageUrls" },
         { label: "Product Name", value: "title" },
         { label: "Product Description", value: "description" },
-        { label: "Product Category", value: "category" },
+        { label: "Product Category", value: "productCategory" },
         { label: "Product Status", value: "status" },
         { label: "Product Inventory", value: "totalInventory" },
         { label: "Product Price", value: "price" },
       ],
-      content: data,
+      content: data.map((product: any) => ({
+        // Map over each product to include image URLs
+        ...product,
+        imageUrls: product.images.map((img: any) => img.url).join(", "), // Concatenate image URLs into a single string
+      })),
     },
   ];
 
