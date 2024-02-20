@@ -108,7 +108,7 @@ export default function Home() {
       </div>
       <div className="max-w-[1280px] mx-auto w-full grid grid-cols-1 lg:grid-cols-[488px_1fr] gap-4 mt-10 mb-10 px-4 md:px-8">
         <div className="gap-4 justify-center lg:justify-center w-full flex flex-col">
-          <h3 className="text-4xl leading-3 md:text-4xl md:leading-4 mt-2 font-bold text-center md:text-left">
+          <h3 className="text-4xl md:text-4xl mt-2 font-bold text-center md:text-left">
             The Nanobébé Experience
           </h3>
           <p className="text-2xl md:text-2xl font-normal text-center md:text-left ">
