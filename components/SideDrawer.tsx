@@ -10,17 +10,27 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./ui/drawer";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
+import { Separator } from "./ui/separator";
+import { useRouter } from "next/navigation";
 interface SideDrawerProps {
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }
 const SideDrawer = ({ open, setOpen }: SideDrawerProps) => {
-  const { cartProducts, handleClearCart, cartTotalAmount } = useCart();
+  // const { cartProducts, handleClearCart, cartTotalAmount } = useCart();
+  const router = useRouter();
+  const {
+    cartProducts,
+    handleRemoveProductFromCart,
+    handleCartQtyIncrease,
+    handleCartQtyDecrease,
+  } = useCart();
+
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild></DrawerTrigger>
@@ -67,7 +77,7 @@ const SideDrawer = ({ open, setOpen }: SideDrawerProps) => {
                               type="button"
                               variant={"ghost"}
                               className="h-[25px] "
-                              // onClick={handleQtyDecrease}
+                              onClick={() => handleCartQtyDecrease(product)}
                             >
                               -
                             </Button>
@@ -78,28 +88,34 @@ const SideDrawer = ({ open, setOpen }: SideDrawerProps) => {
                               type="button"
                               variant={"ghost"}
                               className="h-[25px] "
-
-                              // onClick={handleQtyIncrease}
+                              onClick={() => handleCartQtyIncrease(product)}
                             >
                               +
                             </Button>
                           </div>
-                          <span>{formatPrice(product.price)}</span>
+                          <span>
+                            {formatPrice(product.price * product.quantity)}
+                          </span>
                         </div>
                       </div>
                       <div>
-                        <Button size={"xs"} variant="outline">
+                        <Button
+                          size={"xs"}
+                          variant="outline"
+                          onClick={() => handleRemoveProductFromCart(product)}
+                        >
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
+                    <Separator />
                   </li>
                 ))}
               </ul>
             </div>
           </div>
-          <DrawerFooter>
-            <Button>Checkout</Button>
+          <DrawerFooter className="mb-10 gap-4">
+            <Button onClick={() => router.push("/cart")}>View cart</Button>
             <DrawerClose asChild>
               <Button variant="outline">Continue shopping</Button>
             </DrawerClose>
