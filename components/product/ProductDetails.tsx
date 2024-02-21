@@ -18,9 +18,10 @@ import {
   AccordionTrigger,
 } from "../ui/accordion";
 import { Separator } from "../ui/separator";
-import { formatPrice, truncateText2 } from "@/lib/utils";
+import { cn, formatPrice, truncateText2 } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
+import SideDrawer from "../SideDrawer";
 const imagePaths = [
   "/slide1.jpeg",
   "/slide2.png",
@@ -67,6 +68,8 @@ const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
   });
   const [isProductInCart, setIsProductInCart] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [open, setOpen] = useState(false);
+  console.log({ product });
   console.log({ variant });
 
   useEffect(() => {
@@ -163,59 +166,77 @@ const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
             </p>
             <div className="my-5">RATING GOES HERE</div>
             <div className="flex flex-col gap-2 mt-4 lg:mt-6">
-              <p className="text-4xl font-bold text-black">
+              <p className="text-4xl font-bold text-black mb-5">
                 {formatPrice(product.price)}
               </p>
-              <ul className="flex flex-wrap items-center gap-3 my-5">
-                <li>
-                  <span className="text-base mb-3 inline-block font-bold">
-                    Options
-                  </span>
-                  <ul className="grid grid-cols-4 justify-items-center gap-x-1 gap-y-4 md:gap-2">
-                    {variant?.map((option, index) => (
-                      <li key={option.id} className="outline-transparent">
-                        <Button
-                          variant={"ghost"}
-                          className={`cursor-pointer flex flex-col h-fit ${
-                            index === activeIndex ? "border border-black" : ""
-                          }`}
-                          onClick={() => {
-                            handleSetVariant(index);
-                          }}
-                        >
-                          <div>
+              {product?.options.length > 0 && (
+                <ul className="flex flex-wrap items-center gap-3 my-3">
+                  <li>
+                    <span className="text-base mb-3 inline-block font-bold">
+                      Options
+                    </span>
+                    <ul className="grid grid-cols-4 justify-items-center gap-x-1 gap-y-4 md:gap-2">
+                      {variant?.map((option, index) => (
+                        <li key={option.id} className="outline-transparent">
+                          <Button
+                            variant={"link"}
+                            className="cursor-pointer flex flex-col h-fit"
+                            onClick={() => {
+                              handleSetVariant(index);
+                            }}
+                          >
                             <div
-                              className="relative rounded-full outline-current bg-500 w-[38px] h-[38px] mb-2"
-                              style={{ backgroundColor: option.title }}
-                            />
-                          </div>
-                          <p className="text-xs">{option.title}</p>
-                        </Button>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              </ul>
+                              className={cn(
+                                "rounded-full flex justify-center items-center p-1 mb-2",
+                                index === activeIndex
+                                  ? "border-[2px] border-black"
+                                  : ""
+                              )}
+                            >
+                              <div
+                                className="relative rounded-full outline-current bg-500 w-[38px] h-[38px]"
+                                style={{ backgroundColor: option.title }}
+                              />
+                            </div>
+                            <p className="text-xs">{option.title}</p>
+                          </Button>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                </ul>
+              )}
             </div>
             <div className="flex flex-col justify-between gap-4 mb-14">
               <div className="flex gap-1 items-center text-base">
                 <p className="text-xl mr-7">Quantity:</p>
-                <Button size={"sm"} onClick={handleQtyDecrease}>
+                <Button
+                  variant={"outline"}
+                  size={"sm"}
+                  onClick={handleQtyDecrease}
+                >
                   -
                 </Button>
                 <div className="flex justify-center w-[25px]">
                   {cartProduct.quantity}
                 </div>
-                <Button size={"sm"} onClick={handleQtyIncrease}>
+                <Button
+                  variant={"outline"}
+                  size={"sm"}
+                  onClick={handleQtyIncrease}
+                >
                   +
                 </Button>
               </div>
               <Button
-                onClick={() => handleAddProductToCart(cartProduct)}
-                className="w-3/4"
+                onClick={() => {
+                  handleAddProductToCart(cartProduct);
+                  setOpen(!open);
+                }}
               >
                 Add to cart
               </Button>
+              <SideDrawer open={open} setOpen={setOpen} />
             </div>
           </div>
           <div>

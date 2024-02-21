@@ -10,15 +10,22 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./ui/drawer";
-
-const SideDrawer = () => {
+import { useState } from "react";
+import { useCart } from "@/hooks/useCart";
+import Link from "next/link";
+import Image from "next/image";
+import { formatPrice } from "@/lib/utils";
+interface SideDrawerProps {
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
+}
+const SideDrawer = ({ open, setOpen }: SideDrawerProps) => {
+  const { cartProducts, handleClearCart, cartTotalAmount } = useCart();
   return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <ShoppingBag />
-      </DrawerTrigger>
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild></DrawerTrigger>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-sm flex flex-col justify-between">
+        <div className="mx-auto w-full max-w-sm flex flex-col h-screen">
           <DrawerHeader>
             <DrawerTitle className="flex items-center gap-3 justify-between">
               <div className="flex items-center gap-3">
@@ -31,7 +38,66 @@ const SideDrawer = () => {
               </DrawerClose>
             </DrawerTitle>
           </DrawerHeader>
-          <div className="p-4 pb-0 ">Put stuff here</div>
+          <div className="px-4 overflow-hidden bg-white pt-2 sm:pt-6">
+            <p className="text-sm text-teal-600 font-bold">
+              {cartProducts?.length} items
+            </p>
+            <div>
+              <ul>
+                {cartProducts?.map((product) => (
+                  <li key={product.id}>
+                    <div className="flex justify-evenly gap-4 pb-[10px] pt-2">
+                      <Link href={"/"}>
+                        <div className="aspect-square w-full relative overflow-hidden h-[75px]">
+                          <Image
+                            src={product.images[0].url}
+                            alt="prod img"
+                            priority
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      </Link>
+                      <div className="flex flex-col justify-between max-w-[200px]">
+                        <p>{product.title}</p>
+                        <p>{product.options[0]?.name}</p>
+                        <div className="flex items-center justify-center gap-8">
+                          <div className="flex items-center border">
+                            <Button
+                              type="button"
+                              variant={"ghost"}
+                              className="h-[25px] "
+                              // onClick={handleQtyDecrease}
+                            >
+                              -
+                            </Button>
+                            <div className="flex justify-center w-[25px] ">
+                              {product.quantity}
+                            </div>
+                            <Button
+                              type="button"
+                              variant={"ghost"}
+                              className="h-[25px] "
+
+                              // onClick={handleQtyIncrease}
+                            >
+                              +
+                            </Button>
+                          </div>
+                          <span>{formatPrice(product.price)}</span>
+                        </div>
+                      </div>
+                      <div>
+                        <Button size={"xs"} variant="outline">
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
           <DrawerFooter>
             <Button>Checkout</Button>
             <DrawerClose asChild>

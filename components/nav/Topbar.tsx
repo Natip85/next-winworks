@@ -6,6 +6,7 @@ import { TopbarNavMenu } from "./TopbarNavMenu";
 import SideDrawer from "../SideDrawer";
 import { useRouter } from "next/navigation";
 import getCurrentUser from "@/actions/getCurrentUser";
+import CartCount from "../CartCount";
 
 const Topbar = async () => {
   const currentUser = await getCurrentUser();
@@ -46,9 +47,7 @@ const Topbar = async () => {
           )}
 
           <div>
-            <Button variant={"ghost"} className="p-0">
-              <SideDrawer />
-            </Button>
+            <CartCount />
           </div>
           {currentUser?.role === "ADMIN" && (
             <Link href={"/home"} className="border rounded-md py-2 px-4">
