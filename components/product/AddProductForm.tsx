@@ -103,6 +103,7 @@ const AddProductForm = ({ product, variants }: AddProductFormProps) => {
         totalInventory: 0,
         weight: 0,
         options: [],
+        title: "",
       },
     });
     function onSubmit(values: z.infer<typeof createProductSchema>) {

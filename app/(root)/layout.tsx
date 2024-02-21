@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../globals.css";
-import AuthContext from "@/components/AuthContext";
+import AuthContext from "@/providers/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
 import Sidebar from "@/components/nav/Sidebar";
 import getCurrentUser from "@/actions/getCurrentUser";

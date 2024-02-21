@@ -47,7 +47,7 @@ export const sidebarLinks = [
   {
     icon: <AiOutlineShop size={20} />,
     iconActive: <AiFillShop size={20} />,
-    route: "/store",
+    route: "/",
     label: "Live Store",
   },
 ];

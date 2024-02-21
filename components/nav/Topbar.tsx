@@ -51,7 +51,9 @@ const Topbar = async () => {
             </Button>
           </div>
           {currentUser?.role === "ADMIN" && (
-            <Link href={"/home"}>Go to admin</Link>
+            <Link href={"/home"} className="border rounded-md py-2 px-4">
+              Go to admin
+            </Link>
           )}
         </div>
       </div>
