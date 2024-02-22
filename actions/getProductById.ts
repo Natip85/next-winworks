@@ -10,6 +10,7 @@ export const getProductById = async (productId: string) => {
       },
       include: {
         variants: true,
+        reviews: true,
       },
     });
 

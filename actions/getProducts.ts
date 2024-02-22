@@ -5,6 +5,7 @@ export default async function getProducts() {
     const products = await prismadb.product.findMany({
       include: {
         variants: true,
+        reviews: true,
       },
       orderBy: {
         createdAt: "desc",

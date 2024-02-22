@@ -24,6 +24,7 @@ model User {
   orders         Orders[]
   image          String?
   role           Role      @default(USER)
+  reviews Review[]
 }
 
 model Account {
@@ -65,6 +66,7 @@ model Product {
   weight                Int
   weightUnit            String
   variants              Variant[]
+  reviews Review[]
 }
 
 model Variant {
@@ -136,6 +138,19 @@ type Addresses {
   phone             String
   street            String
   userId            String
+}
+
+model Review{
+  id  String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  productId String @db.ObjectId
+  rating Int
+  comment String
+  createdDate DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
 }
 
 type Image {

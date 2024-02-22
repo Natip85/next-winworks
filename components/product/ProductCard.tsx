@@ -22,6 +22,7 @@ const ProductCard = ({ products }: ProductCardProps) => {
         p-2
         text-center
         text-sm
+        min-w-[175px]
       "
     >
       <div className="flex flex-col items-center w-full gap-1">

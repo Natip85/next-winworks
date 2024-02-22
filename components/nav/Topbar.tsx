@@ -1,15 +1,23 @@
+"use client";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { User } from "lucide-react";
+import { ShoppingBag, User } from "lucide-react";
 import Image from "next/image";
 import { TopbarNavMenu } from "./TopbarNavMenu";
 import SideDrawer from "../SideDrawer";
 import { useRouter } from "next/navigation";
 import getCurrentUser from "@/actions/getCurrentUser";
 import CartCount from "../CartCount";
+import { useState } from "react";
+import { useCart } from "@/hooks/useCart";
+interface TopbarProps {
+  user: any;
+}
+const Topbar = ({ user }: TopbarProps) => {
+  const { cartTotalQty } = useCart();
 
-const Topbar = async () => {
-  const currentUser = await getCurrentUser();
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="sticky top-0 z-50 bg-white py-2 lg:py-4">
       <div className="mx-auto box-border flex w-full max-w-screen-xl items-center justify-between px-3 lg:px-8">
@@ -32,7 +40,7 @@ const Topbar = async () => {
           </div>
         </nav>
         <div className="flex justify-between items-center gap-4">
-          {currentUser ? (
+          {user ? (
             <>
               <User />
             </>
@@ -47,9 +55,19 @@ const Topbar = async () => {
           )}
 
           <div>
-            <CartCount />
+            <Button
+              variant={"link"}
+              onClick={() => setOpen(!open)}
+              className="relative"
+            >
+              <span className="absolute top-[-8px] right-[3px] rounded-full p-0 bg-teal-700 size-5 text-white">
+                {cartTotalQty}
+              </span>
+              <ShoppingBag />
+            </Button>
+            <SideDrawer open={open} setOpen={setOpen} />
           </div>
-          {currentUser?.role === "ADMIN" && (
+          {user?.role === "ADMIN" && (
             <Link href={"/home"} className="border rounded-md py-2 px-4">
               Go to admin
             </Link>

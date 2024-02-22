@@ -22,6 +22,9 @@ import { cn, formatPrice, truncateText2 } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import SideDrawer from "../SideDrawer";
+import { CheckCheckIcon } from "lucide-react";
+import { Rating } from "@mui/material";
+
 const imagePaths = [
   "/slide1.jpeg",
   "/slide2.png",
@@ -47,7 +50,7 @@ export type CartProductType = {
 };
 
 interface ProductDetailsProps {
-  product: Product;
+  product: any;
   variant?: Variant[];
 }
 const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
@@ -69,8 +72,8 @@ const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
   const [isProductInCart, setIsProductInCart] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [open, setOpen] = useState(false);
-  console.log({ product });
-  console.log({ variant });
+  // console.log({ product });
+  // console.log({ variant });
 
   useEffect(() => {
     setIsProductInCart(false);
@@ -118,6 +121,10 @@ const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
     setActiveIndex(index);
   };
 
+  const productRating =
+    product.reviews.reduce((acc: number, item: any) => item.rating + acc, 0) /
+    product.reviews.length;
+
   return (
     <Container>
       <div className="grid grid-cols-4 md:grid-cols-12 xl:max-w-screen-xl gap-4 lg:gap-8">
@@ -131,8 +138,8 @@ const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
                 }}
               >
                 <CarouselContent>
-                  {productImages.map((img, index) => (
-                    <CarouselItem key={index} className="">
+                  {productImages.map((img: prismaImg, index: number) => (
+                    <CarouselItem key={index}>
                       <div className="aspect-square w-full relative overflow-hidden ">
                         <Image
                           src={img?.url || ""}
@@ -164,7 +171,10 @@ const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
             <p className="text-sm leading-sm md:text-base mt-1 text-gray-600">
               {truncateText2(product.description)}
             </p>
-            <div className="my-5">RATING GOES HERE</div>
+            <div className="my-5 flex items-center gap-3 text-muted-foreground">
+              <Rating value={productRating} readOnly /> (
+              {product.reviews.length})
+            </div>
             <div className="flex flex-col gap-2 mt-4 lg:mt-6">
               <p className="text-4xl font-bold text-black mb-5">
                 {formatPrice(product.price)}
@@ -179,6 +189,7 @@ const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
                       {variant?.map((option, index) => (
                         <li key={option.id} className="outline-transparent">
                           <Button
+                            disabled={isProductInCart}
                             variant={"link"}
                             className="cursor-pointer flex flex-col h-fit"
                             onClick={() => {
@@ -208,9 +219,11 @@ const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
               )}
             </div>
             <div className="flex flex-col justify-between gap-4 mb-14">
+              <Separator />
               <div className="flex gap-1 items-center text-base">
-                <p className="text-xl mr-7">Quantity:</p>
+                <p className="text-md font-bold mr-7">Quantity:</p>
                 <Button
+                  disabled={isProductInCart}
                   variant={"outline"}
                   size={"sm"}
                   onClick={handleQtyDecrease}
@@ -221,6 +234,7 @@ const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
                   {cartProduct.quantity}
                 </div>
                 <Button
+                  disabled={isProductInCart}
                   variant={"outline"}
                   size={"sm"}
                   onClick={handleQtyIncrease}
@@ -228,15 +242,25 @@ const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
                   +
                 </Button>
               </div>
+              <Separator />
               <Button
+                disabled={isProductInCart}
                 onClick={() => {
                   handleAddProductToCart(cartProduct);
                   setOpen(!open);
+                  setIsProductInCart(!isProductInCart);
                 }}
+                variant={isProductInCart ? "outline" : "default"}
               >
-                Add to cart
+                {isProductInCart ? (
+                  <div className="flex items-center gap-3">
+                    <CheckCheckIcon /> <span>Added to cart</span>
+                  </div>
+                ) : (
+                  "Add to cart"
+                )}
               </Button>
-              <SideDrawer open={open} setOpen={setOpen} />
+              <SideDrawer open={open} setOpen={setOpen} variant={variant} />
             </div>
           </div>
           <div>

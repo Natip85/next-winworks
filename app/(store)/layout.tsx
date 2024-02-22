@@ -32,7 +32,7 @@ export default async function RootLayout({
                   </span>
                 </div>
               </div>
-              <Topbar />
+              <Topbar user={currentUser} />
               <main className="flex-grow">{children}</main>
             </div>
           </CartProvider>
