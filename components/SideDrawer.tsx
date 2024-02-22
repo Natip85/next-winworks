@@ -10,14 +10,12 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./ui/drawer";
-import { useCallback, useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import { Separator } from "./ui/separator";
 import { useRouter } from "next/navigation";
-import { Product, Variant } from "@prisma/client";
 interface SideDrawerProps {
   open?: boolean;
   setOpen?: (open: boolean) => void;
@@ -30,7 +28,6 @@ const SideDrawer = ({ open, setOpen, variant }: SideDrawerProps) => {
     handleRemoveProductFromCart,
     handleCartQtyIncrease,
     handleCartQtyDecrease,
-    handleClearCart,
     cartTotalAmount,
   } = useCart();
 
@@ -38,8 +35,8 @@ const SideDrawer = ({ open, setOpen, variant }: SideDrawerProps) => {
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild></DrawerTrigger>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-sm flex flex-col h-screen">
-          <DrawerHeader>
+        <div className="mx-auto w-full max-w-sm flex flex-col h-screen ">
+          <DrawerHeader className="bg-white">
             <DrawerTitle className="flex items-center gap-3 justify-between">
               <div className="flex items-center gap-3">
                 <ShoppingBag /> Mini cart
@@ -52,7 +49,7 @@ const SideDrawer = ({ open, setOpen, variant }: SideDrawerProps) => {
             </DrawerTitle>
           </DrawerHeader>
 
-          <div className="px-4 overflow-hidden bg-white pt-2 sm:pt-6">
+          <div className="px-4 overflow-hidden  pt-2 sm:pt-6 ">
             <p className="text-sm text-teal-600 font-bold">
               {cartProducts?.length} items
             </p>
@@ -119,7 +116,19 @@ const SideDrawer = ({ open, setOpen, variant }: SideDrawerProps) => {
               </ul>
             </div>
           </div>
-          <DrawerFooter className="mb-10 gap-4">
+          <DrawerFooter className="mb-10 gap-4 bg-white">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-teal-600">Subtotal:</p>
+              <p className="text-2xl font-bold">
+                {formatPrice(cartTotalAmount)}
+              </p>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-teal-600">Shipping:</p>
+              <p className="text-[.6rem]">
+                Taxes and shipping fee will be calculated at checkout
+              </p>
+            </div>
             <DrawerClose asChild>
               <Button onClick={() => router.push("/cart")}>View cart</Button>
             </DrawerClose>
