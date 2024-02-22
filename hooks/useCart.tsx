@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { CartProductType } from "@/components/product/ProductDetails";
-import { useToast } from "@/components/ui/use-toast";
+// import { useToast } from "@/components/ui/use-toast";
 
 type CartContextType = {
   id?: string;
@@ -29,7 +29,7 @@ interface Props {
 }
 
 export const CartContextProvider = (props: Props) => {
-  const { toast } = useToast();
+  // const { toast } = useToast();
 
   const [cartProducts, setCartProducts] = useState<CartProductType[] | null>(
     null
@@ -78,10 +78,10 @@ export const CartContextProvider = (props: Props) => {
         updatedCart = [product];
       }
 
-      toast({
-        variant: "success",
-        description: "Product added to cart",
-      });
+      // toast({
+      //   variant: "success",
+      //   description: "Product added to cart",
+      // });
       localStorage.setItem("eShopCartItems", JSON.stringify(updatedCart));
       return updatedCart;
     });
@@ -94,10 +94,10 @@ export const CartContextProvider = (props: Props) => {
           return item.id !== product.id;
         });
         setCartProducts(filteredProducts);
-        toast({
-          variant: "success",
-          description: "Product removed",
-        });
+        // toast({
+        //   variant: "success",
+        //   description: "Product removed",
+        // });
         localStorage.setItem(
           "eShopCartItems",
           JSON.stringify(filteredProducts)
@@ -111,10 +111,11 @@ export const CartContextProvider = (props: Props) => {
     (product: CartProductType) => {
       let updatedCart;
       if (product.quantity === 99) {
-        return toast({
-          variant: "destructive",
-          description: "Oops maximum reached",
-        });
+        return;
+        // toast({
+        //   variant: "destructive",
+        //   description: "Oops maximum reached",
+        // });
       }
       if (cartProducts) {
         updatedCart = [...cartProducts];
@@ -136,10 +137,11 @@ export const CartContextProvider = (props: Props) => {
     (product: CartProductType) => {
       let updatedCart;
       if (product.quantity === 1) {
-        return toast({
-          variant: "destructive",
-          description: "Oops minimum reached",
-        });
+        return;
+        // toast({
+        //   variant: "destructive",
+        //   description: "Oops minimum reached",
+        // });
       }
       if (cartProducts) {
         updatedCart = [...cartProducts];

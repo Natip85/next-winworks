@@ -120,7 +120,9 @@ const SideDrawer = ({ open, setOpen, variant }: SideDrawerProps) => {
             </div>
           </div>
           <DrawerFooter className="mb-10 gap-4">
-            <Button onClick={() => router.push("/cart")}>View cart</Button>
+            <DrawerClose asChild>
+              <Button onClick={() => router.push("/cart")}>View cart</Button>
+            </DrawerClose>
             <DrawerClose asChild>
               <Button onClick={() => router.push("/store")} variant="outline">
                 Continue shopping

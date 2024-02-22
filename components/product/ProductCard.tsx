@@ -1,17 +1,21 @@
 "use client";
-import { formatPrice, truncateText } from "@/lib/utils";
-import { Product } from "@prisma/client";
+import { cn, formatPrice, truncateText } from "@/lib/utils";
+import { Product, Variant } from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Button } from "../ui/button";
 
 interface ProductCardProps {
-  products: Product | null;
+  products: ProductWithVariants | null;
 }
-
+export type ProductWithVariants = Product & {
+  variants: Variant[];
+};
 const ProductCard = ({ products }: ProductCardProps) => {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
+  console.log(products?.variants);
 
   return (
     <div
@@ -43,9 +47,18 @@ const ProductCard = ({ products }: ProductCardProps) => {
             alt={products?.title || "product image"}
           />
         </div>
-        <div className="mt-4">{truncateText(products?.title || "")}</div>5 sytar
-        rating here
-        <div>43 reviews</div>
+        <div>
+          <div className="flex items-center gap-2">
+            {products?.variants?.map((option, index) => (
+              <div
+                key={option.id}
+                className="relative rounded-full outline-current bg-500 size-4 mt-3"
+                style={{ backgroundColor: option.title }}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="mt-4">{truncateText(products?.title || "")}</div>
         <div className="font-semibold">{formatPrice(products?.price || 0)}</div>
       </div>
     </div>

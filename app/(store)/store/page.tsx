@@ -11,6 +11,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 const imagePaths = [
@@ -38,51 +39,28 @@ const page = async () => {
             <div className="hidden pr-5 md:block">
               <p className="text-lg my-4 font-bold text-gray-900">Color</p>
               <ul className="grid grid-cols-4 justify-items-center gap-x-1 gap-y-4 md:gap-2">
-                <li className="outline-transparent">
-                  <Button
-                    variant={"ghost"}
-                    className="cursor-pointer flex flex-col h-fit p-0"
-                  >
-                    <div className="relative rounded-full outline-current bg-[#EB889B] w-[38px] h-[38px] mb-2" />
-                    <p className="text-xs">Pink</p>
-                  </Button>
-                </li>
-                <li className="outline-transparent">
-                  <Button
-                    variant={"ghost"}
-                    className="cursor-pointer flex flex-col h-fit p-0"
-                  >
-                    <div className="relative rounded-full outline-current bg-[#EB889B] w-[38px] h-[38px] mb-2" />
-                    <p className="text-xs">Pink</p>
-                  </Button>
-                </li>
-                <li className="outline-transparent">
-                  <Button
-                    variant={"ghost"}
-                    className="cursor-pointer flex flex-col h-fit p-0"
-                  >
-                    <div className="relative rounded-full outline-current bg-[#EB889B] w-[38px] h-[38px] mb-2" />
-                    <p className="text-xs">Pink</p>
-                  </Button>
-                </li>
-                <li className="outline-transparent">
-                  <Button
-                    variant={"ghost"}
-                    className="cursor-pointer flex flex-col h-fit p-0"
-                  >
-                    <div className="relative rounded-full outline-current bg-[#EB889B] w-[38px] h-[38px] mb-2" />
-                    <p className="text-xs">Pink</p>
-                  </Button>
-                </li>
-                <li className="outline-transparent">
-                  <Button
-                    variant={"ghost"}
-                    className="cursor-pointer flex flex-col h-fit p-0"
-                  >
-                    <div className="relative rounded-full outline-current bg-[#EB889B] w-[38px] h-[38px] mb-2" />
-                    <p className="text-xs">Pink</p>
-                  </Button>
-                </li>
+                {products.map((option, index) =>
+                  option.variants.map((variant) => {
+                    return (
+                      <div>
+                        <li className="outline-transparent">
+                          <Button
+                            variant={"ghost"}
+                            className="cursor-pointer flex flex-col h-fit p-0"
+                          >
+                            <div
+                              className="relative rounded-full outline-current  w-[38px] h-[38px] mb-2"
+                              style={{
+                                backgroundColor: variant.title.toLowerCase(),
+                              }}
+                            />
+                            <p className="text-xs">{variant.title}</p>
+                          </Button>
+                        </li>
+                      </div>
+                    );
+                  })
+                )}
               </ul>
               <p className="text-lg my-4 font-bold text-gray-900">Category</p>
               <ul className="flex flex-col">
@@ -143,6 +121,8 @@ const page = async () => {
             </div>
             <div className="grid gap-4 md:gap-8 grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-4">
               {products.map((product) => {
+                console.log("THIS>>", product);
+
                 return <ProductCard key={product.id} products={product} />;
               })}
             </div>
