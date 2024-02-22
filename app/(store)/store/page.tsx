@@ -39,7 +39,7 @@ const page = async () => {
             <div className="hidden pr-5 md:block">
               <p className="text-lg my-4 font-bold text-gray-900">Color</p>
               <ul className="grid grid-cols-4 justify-items-center gap-x-1 gap-y-4 md:gap-2">
-                {products.map((option, index) =>
+                {/* {products.map((option, index) =>
                   option.variants.map((variant) => {
                     return (
                       <div>
@@ -60,7 +60,7 @@ const page = async () => {
                       </div>
                     );
                   })
-                )}
+                )} */}
               </ul>
               <p className="text-lg my-4 font-bold text-gray-900">Category</p>
               <ul className="flex flex-col">
