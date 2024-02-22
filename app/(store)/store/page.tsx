@@ -38,11 +38,14 @@ const page = async () => {
             </p>
             <div className="hidden pr-5 md:block">
               <p className="text-lg my-4 font-bold text-gray-900">Color</p>
-              <ul className="grid grid-cols-4 justify-items-center gap-x-1 gap-y-4 md:gap-2">
-                {products.map((option, index) =>
-                  option.variants.map((variant) => {
-                    return (
-                      <div>
+              <ul className="">
+                {products.map((option, index) => (
+                  <div
+                    key={option.id}
+                    className="grid grid-cols-4 justify-items-center gap-x-1 gap-y-4 md:gap-2"
+                  >
+                    {option.variants.map((variant) => (
+                      <div key={variant.id}>
                         <li className="outline-transparent">
                           <Button
                             variant={"ghost"}
@@ -58,9 +61,9 @@ const page = async () => {
                           </Button>
                         </li>
                       </div>
-                    );
-                  })
-                )}
+                    ))}
+                  </div>
+                ))}
               </ul>
               <p className="text-lg my-4 font-bold text-gray-900">Category</p>
               <ul className="flex flex-col">
