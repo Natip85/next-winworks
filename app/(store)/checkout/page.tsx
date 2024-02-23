@@ -1,11 +1,7 @@
 import CheckoutClient from "@/components/product/CheckoutClient";
 
 const Checkout = () => {
-  return (
-    <div>
-      <CheckoutClient />
-    </div>
-  );
+  return <CheckoutClient />;
 };
 
 export default Checkout;

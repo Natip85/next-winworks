@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useToast } from "../ui/use-toast";
 import { useCart } from "@/hooks/useCart";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 interface CheckoutFormProps {
   clientSecret: string;
@@ -68,8 +69,11 @@ const CheckoutForm = ({
 
   return (
     <form onSubmit={handleSubmit} id="payment-form">
-      <div className="mb-6">enter your detials gheader here</div>
-      <h2 className="font-semibold mb-2">Address detials</h2>
+      <div>
+        <h3 className="text-2xl font-semibold mb-3">Contact</h3>
+        <Input placeholder="Email" />
+      </div>
+      <h3 className="text-2xl font-semibold my-3">Delivery</h3>
       <AddressElement
         options={{ mode: "shipping", allowedCountries: ["US", "CA", "UK"] }}
       />
@@ -78,9 +82,11 @@ const CheckoutForm = ({
       <div className="py-4 text-center text-slate-700 text-xl font-bold">
         Total: {formattedPrice}
       </div>
-      <Button disabled={isLoading || !stripe || !elements}>
-        {isLoading ? "Processing..." : "Pay now"}
-      </Button>
+      <div>
+        <Button disabled={isLoading || !stripe || !elements} className="w-full">
+          {isLoading ? "Processing..." : "Pay now"}
+        </Button>
+      </div>
     </form>
   );
 };
