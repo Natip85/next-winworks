@@ -116,7 +116,7 @@ const SideDrawer = ({ open, setOpen, variant }: SideDrawerProps) => {
               </ul>
             </div>
           </div>
-          <DrawerFooter className="mb-10 gap-4 bg-white">
+          <DrawerFooter className="mb-20 gap-4 bg-white">
             <div className="flex items-center justify-between">
               <p className="text-sm text-teal-600">Subtotal:</p>
               <p className="text-2xl font-bold">
