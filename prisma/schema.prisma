@@ -21,7 +21,7 @@ model User {
   emailVerified  DateTime?
   accounts       Account[]
   addresses      Addresses[]
-  orders         Orders[]
+  orders         Order[]
   image          String?
   role           Role      @default(USER)
   reviews Review[]
@@ -77,7 +77,6 @@ model Variant {
   available         Boolean
   featuredImage     Image?
   images            Image[]
-  // options           VariantOptions[]
   requiresShipping  Boolean
   sku               String
   weight            Int
@@ -88,15 +87,31 @@ model Variant {
   product           Product? @relation(fields: [parentId], references: [id], onDelete: Cascade)
 }
 
-type ProductOptions {
-  name              String
- 
+model Order {
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt         DateTime @default(now())
+  billingAddress    Addresses?
+  email             String
+  fulfillmentStatus FulfillmentStatusLabel? @default(UNFULFILLED)
+  paymentStatus        String
+  itemCount         Int
+  shippingAddress   Addresses?
+  shippingPrice     Int
+  subtotalPrice     Int
+  currency          String
+  taxPrice          Int
+  totalDiscounts    Int
+  totalPrice        Float
+  deliveryStatus    String
+  products CartProductType[]
+   paymentIntentId   String @unique
+  userId            String @db.ObjectId
+  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-// type VariantOptions {
-//   name              String
-//   value             String
- 
-// }
+
+type ProductOptions {
+  name      String
+}
 
 type Collection {
   id                   Int
@@ -108,30 +123,14 @@ type Collection {
   createdAt            DateTime  @default(now())
 }
 
-model Orders {
-  id                String @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt         DateTime @default(now())
-  billingAddress    Addresses
-  email             String 
-  fulfillmentStatus FulfillmentStatusLabel @default(UNFULFILLED)
-  itemCount         Int
-  shippingAddress   Addresses
-  shippingPrice     Int
-  subtotalPrice     Int
-  taxPrice          Int
-  totalDiscounts    Int?
-  totalNetAmount    Int
-  totalPrice        Int
-  userId            String @db.ObjectId
-  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 type Addresses {
-  address1          String
-  address2          String 
+  line1          String
+  line2          String?
   city              String
   country           String
   countryCode       String
+  postal_code String
+  state String
   firstName         String
   lastName          String
   fullName          String
@@ -160,8 +159,22 @@ type Image {
   size             Int
   serverData       ServerData
 }
+
 type ServerData {
   uploadedBy String    
+}
+
+type CartProductType  {
+  id String
+  title String
+  decription String
+  images Image[]
+  options ProductOptions[]
+  productCategory String
+  productType String
+  quantity Int
+  price Int
+  variant Json
 }
 
 enum Role {
@@ -176,6 +189,7 @@ enum FulfillmentStatusLabel {
   RESTOCKED
   UNFULFILLED 
 }
+
 
 
 

@@ -1,13 +1,14 @@
 import getCurrentUser from "@/actions/getCurrentUser";
-import Container from "@/components/Container";
+import getProducts from "@/actions/getProducts";
 import CartClient from "@/components/product/CartClient";
 
 const Cart = async () => {
   const currentUser = await getCurrentUser();
+  const products = await getProducts();
   return (
-    <Container>
-      <CartClient currentUser={currentUser} />
-    </Container>
+    <div>
+      <CartClient currentUser={currentUser} products={products} />
+    </div>
   );
 };
 

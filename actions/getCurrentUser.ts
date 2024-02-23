@@ -18,6 +18,7 @@ export default async function getCurrentUser() {
       },
       include: {
         orders: true,
+        reviews: true,
       },
     });
     if (!currentUser) {
