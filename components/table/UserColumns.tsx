@@ -1,6 +1,9 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
+import Link from "next/link";
+import { Order, User } from "@prisma/client";
+import { formatPrice } from "@/lib/utils";
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -27,5 +30,60 @@ export const columns: ColumnDef<any>[] = [
     },
     enableSorting: false,
     enableHiding: false,
+  },
+  {
+    header: "Customer name",
+    accessorKey: "name",
+    cell: ({ row }) => {
+      const customer = row.original;
+      const customerId = customer.id;
+      const allCustomers: string = row.getValue("name");
+      return (
+        <Link
+          href={`/customers/${customerId}`}
+          className="font-bold hover:underline "
+        >
+          {allCustomers}
+        </Link>
+      );
+    },
+  },
+  {
+    header: "Customer email",
+    accessorKey: "email",
+    cell: ({ row }) => {
+      const allCustomers: string = row.getValue("email");
+      return <span>{allCustomers}</span>;
+    },
+  },
+  {
+    header: "Location",
+    accessorKey: "location",
+    cell: ({ row }) => {
+      console.log("ROW>>>", row.original.addresses);
+    },
+  },
+  {
+    header: "Orders",
+    accessorKey: "orders",
+    cell: ({ row }) => {
+      const allOrders: Order[] = row.getValue("orders");
+      return <span>{allOrders.length}</span>;
+    },
+  },
+  {
+    header: "Amount spent",
+    accessorKey: "totalSpent",
+    cell: ({ row }) => {
+      const totalPriceArray = row.original.orders.map(
+        (order: any) => order.totalPrice
+      );
+      const totalPriceSum = totalPriceArray.reduce(
+        (total: number, current: number) => total + current,
+        0
+      );
+      const formattedTotalPriceSum = totalPriceSum / 100;
+      return <div>{formatPrice(formattedTotalPriceSum)}</div>;
+    },
   },
 ];
