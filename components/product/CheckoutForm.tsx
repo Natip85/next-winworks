@@ -41,7 +41,6 @@ const CheckoutForm = ({
   }, [stripe]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("payment elements", elements);
     e.preventDefault();
     if (!stripe || !elements) {
       return;
@@ -53,7 +52,6 @@ const CheckoutForm = ({
         redirect: "if_required",
       })
       .then((result) => {
-        console.log("payment result", result);
         if (!result.error) {
           toast({
             variant: "success",

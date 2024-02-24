@@ -15,7 +15,6 @@ export type ProductWithVariants = Product & {
 const ProductCard = ({ products }: ProductCardProps) => {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
-  console.log(products?.variants);
 
   return (
     <div

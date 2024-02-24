@@ -124,8 +124,6 @@ const page = async () => {
             </div>
             <div className="grid gap-4 md:gap-8 grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-4">
               {products.map((product) => {
-                console.log("THIS>>", product);
-
                 return <ProductCard key={product.id} products={product} />;
               })}
             </div>

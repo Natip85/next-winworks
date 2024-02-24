@@ -28,9 +28,6 @@ const CheckoutClient = () => {
     handleSetPaymentIntent,
     cartTotalAmount,
   } = useCart();
-  console.log("payinten>>>", paymentIntent);
-  console.log("cleintsecret>>>", clientSecret);
-  console.log("CARTPRODS>>>", cartProducts);
 
   useEffect(() => {
     if (cartProducts) {

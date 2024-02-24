@@ -128,14 +128,14 @@ type Addresses {
   line2          String?
   city              String
   country           String
-  countryCode       String
+  countryCode       String?
   postal_code String
   state String
-  firstName         String
-  lastName          String
-  fullName          String
-  phone             String
-  street            String
+  firstName         String?
+  lastName          String?
+  fullName          String?
+  phone             String?
+  street            String?
   userId            String
 }
 

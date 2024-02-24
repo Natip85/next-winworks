@@ -20,27 +20,21 @@ export async function PATCH(
         variants: true,
       },
     });
-    console.log("body>>>", body);
 
     const existingVariants = await prismadb.variant.findMany({
       where: {
         parentId: params.productId,
       },
     });
-    console.log("EXISTINGVARIANTS>>>", existingVariants);
     const missingVariants = existingVariants.filter((variant) =>
       body.options.every(
         (option: { name: string }) => variant.title !== option.name
       )
     );
 
-    console.log("MISSINGVARIANTS>>>", missingVariants);
-
     const additionalVariants = body.options.filter((option: { name: string }) =>
       existingVariants.every((variant) => variant.title !== option.name)
     );
-
-    console.log("ADDITIONALVARIANTS>>>", additionalVariants);
 
     const variantPromises = additionalVariants.map(
       async (option: { name: string }) => {
@@ -63,7 +57,6 @@ export async function PATCH(
     );
 
     await Promise.all(variantPromises);
-    console.log("VARINATPROMISES>>>", variantPromises);
 
     const deletePromises = missingVariants.map(async (variant) => {
       return prismadb.variant.deleteMany({

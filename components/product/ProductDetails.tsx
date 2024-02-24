@@ -72,8 +72,6 @@ const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
   const [isProductInCart, setIsProductInCart] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [open, setOpen] = useState(false);
-  // console.log({ product });
-  // console.log({ variant });
 
   useEffect(() => {
     setIsProductInCart(false);
