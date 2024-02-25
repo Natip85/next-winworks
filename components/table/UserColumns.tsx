@@ -41,9 +41,9 @@ export const columns: ColumnDef<any>[] = [
       return (
         <Link
           href={`/customers/${customerId}`}
-          className="font-bold hover:underline "
+          className="font-semibold hover:underline "
         >
-          {allCustomers}
+          <span>{allCustomers}</span>
         </Link>
       );
     },
@@ -59,9 +59,7 @@ export const columns: ColumnDef<any>[] = [
   {
     header: "Location",
     accessorKey: "location",
-    cell: ({ row }) => {
-      console.log("ROW>>>", row.original.addresses);
-    },
+    cell: ({ row }) => {},
   },
   {
     header: "Orders",

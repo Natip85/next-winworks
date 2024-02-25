@@ -5,8 +5,6 @@ import Link from "next/link";
 
 const Customers = async () => {
   const users = (await getAllUsers()) || [];
-  console.log("USERS>>>>", users);
-  console.log("COLUMS<<>>>", columns);
 
   return (
     <div>

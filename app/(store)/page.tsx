@@ -63,6 +63,7 @@ export default function Home() {
                 alt="logo"
                 width={600}
                 height={600}
+                priority
               />
             </span>
           </div>

@@ -7,8 +7,6 @@ interface CustomerPageProps {
   };
 }
 const Customer = async ({ params }: CustomerPageProps) => {
-  console.log("PARAMS>>", params);
-
   const user = await getUserById(params.customerId);
 
   return (
