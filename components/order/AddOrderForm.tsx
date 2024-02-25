@@ -2,7 +2,7 @@
 import { Order, Product, User } from "@prisma/client";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { ArrowLeft, ChevronsUpDown, Trash2, X } from "lucide-react";
+import { ArrowLeft, ChevronsUpDown, PlusCircle, Trash2, X } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -30,19 +30,22 @@ import { useRouter } from "next/navigation";
 interface AddOrderFormProps {
   order: OrderWithUser | null;
   products: Product[];
+  users: any;
 }
 export type OrderWithUser = Order & {
   user: User;
 };
 
-const AddOrderForm = ({ order, products }: AddOrderFormProps) => {
+const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
   const [leave, setLeave] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [productQuantities, setProductQuantities] = useState<{
     [key: string]: number;
   }>({});
+  console.log({ users });
 
   const handleCheckboxChange = (productId: string) => {
     const isSelected = selectedProducts.some(
@@ -77,13 +80,6 @@ const AddOrderForm = ({ order, products }: AddOrderFormProps) => {
     const quantity = productQuantities[prod.id] || 1;
     return acc + prod.price * quantity;
   }, 0);
-  const finalData = {
-    products: selectedProducts.map((product) => ({
-      ...product,
-      quantity: productQuantities[product.id] || 1,
-    })),
-    fulfillmentStatus: "Unfullfilled",
-  };
 
   const onSubmit = () => {
     const finalData = {
@@ -105,21 +101,7 @@ const AddOrderForm = ({ order, products }: AddOrderFormProps) => {
       email: "",
     };
   };
-  const handleLeavePage = () => {
-    // if (pathname === "/orders/new") {
-    //   if (Object.keys(form.formState.touchedFields).length > 0) {
-    //     setLeave(!leave);
-    //   } else {
-    //     router.push("/orders");
-    //   }
-    // } else {
-    //   if (Object.keys(form.formState.dirtyFields).length > 0) {
-    //     setLeave(!leave);
-    //   } else {
-    //     router.push("/orders");
-    //   }
-    // }
-  };
+
   return (
     <div>
       <div className="flex flex-col max-w-[950px] gap-3 mx-auto">
@@ -128,7 +110,7 @@ const AddOrderForm = ({ order, products }: AddOrderFormProps) => {
             <Button
               type="button"
               variant={"ghost"}
-              onClick={handleLeavePage}
+              onClick={() => {}}
               className="hover:bg-gray-200 p-0 px-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -188,7 +170,7 @@ const AddOrderForm = ({ order, products }: AddOrderFormProps) => {
                       variant="outline"
                       role="combobox"
                       aria-expanded={open}
-                      className="justify-between"
+                      className="justify-between font-normal"
                     >
                       Browse all products
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -363,7 +345,60 @@ const AddOrderForm = ({ order, products }: AddOrderFormProps) => {
               section 2
             </div>
             <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
-              section 2
+              <h2 className="font-semibold mb-3">Customer</h2>
+              <Popover open={open2} onOpenChange={setOpen2}>
+                <PopoverTrigger asChild className="w-full">
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="justify-between font-normal"
+                  >
+                    Search or create a customer
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <Command>
+                    <div className="p-3 flex items-center justify-between gap-5">
+                      <div className="flex-1">
+                        <CommandInput placeholder="Search a customer" />
+                      </div>
+                    </div>
+                    <div className="p-1">
+                      <Button
+                        variant={"secondary"}
+                        className="flex items-center gap-3 w-full"
+                      >
+                        <PlusCircle /> Create a new customer
+                      </Button>
+                    </div>
+                    <CommandEmpty>No customer found.</CommandEmpty>
+                    <CommandGroup className="flex flex-col gap-3 h-[200px] overflow-y-auto">
+                      {users.map((user: any, i: number) => (
+                        <CommandItem key={user.id} className="cursor-pointer">
+                          <div className="w-full flex flex-col">
+                            <span className="font-normal">{user.name}</span>
+                            <span className="font-normal text-muted-foreground">
+                              {user.email}
+                            </span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                    <div className="p-3 flex justify-end border-t-2">
+                      <Button
+                        size={"sm"}
+                        onClick={() => {
+                          setOpen2(!open2);
+                        }}
+                      >
+                        Done
+                      </Button>
+                    </div>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
         </div>

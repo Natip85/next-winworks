@@ -54,7 +54,7 @@ const CartClient = ({ currentUser, products }: CartClientProps) => {
                       <Link href={"/"} className="flex gap-8">
                         <span className="relative block overflow-hidden size-20">
                           <Image
-                            src={product.images[0].url}
+                            src={product.images[0]?.url}
                             alt={product.title}
                             fill
                             className="my-0 object-cover transition-[scale,filter] duration-700"
@@ -182,7 +182,7 @@ const CartClient = ({ currentUser, products }: CartClientProps) => {
                 <div className="relative flex w-full flex-col transition-transform hover:scale-105">
                   <span className="aspect-video block relative  w-full overflow-hidden rounded-xl">
                     <Image
-                      src={product.images[0].url}
+                      src={product.images[0]?.url}
                       alt={product.title}
                       fill
                       style={{
