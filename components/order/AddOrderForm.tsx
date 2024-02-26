@@ -342,9 +342,6 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
           </div>
           <div className="flex-1 ">
             <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
-              section 2
-            </div>
-            <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
               <h2 className="font-semibold mb-3">Customer</h2>
               <Popover open={open2} onOpenChange={setOpen2}>
                 <PopoverTrigger asChild className="w-full">
@@ -399,6 +396,9 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                   </Command>
                 </PopoverContent>
               </Popover>
+            </div>
+            <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
+              section 2
             </div>
           </div>
         </div>

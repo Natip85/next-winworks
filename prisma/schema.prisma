@@ -129,6 +129,7 @@ type Addresses {
   city              String
   country           String
   countryCode       String?
+  apartment String?
   postal_code       String
   state          String
   firstName         String?
