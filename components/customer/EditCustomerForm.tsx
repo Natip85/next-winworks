@@ -1,4 +1,4 @@
-import { Loader2Icon, Pencil, PencilLine } from "lucide-react";
+"use client";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -49,7 +49,6 @@ const EditCustomerForm = ({
     });
 
     function onSubmit(values: z.infer<typeof createCustomerFormSchema>) {
-      console.log("CUSTOMERFORMVALUES>>>", values);
       setIsLoading(true);
 
       axios

@@ -185,8 +185,8 @@ function UserTable<TData, TValue>({
           )}
         </div>
         <div className="bg-white overflow-hidden border-[1px] border-t-0 border-slate-300 shadow-md rounded-b-lg mb-3">
-          <Table className="bg-white p-5">
-            <TableHeader className="bg-gray-100 p-5">
+          <Table className="bg-white">
+            <TableHeader className="bg-gray-100">
               {table.getHeaderGroups().map((headerGroup) => {
                 return (
                   <TableRow key={headerGroup.id}>

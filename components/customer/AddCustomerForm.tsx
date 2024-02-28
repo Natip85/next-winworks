@@ -15,12 +15,8 @@ import { Button } from "../ui/button";
 import {
   ArrowLeft,
   Clipboard,
-  Edit2,
   Edit3Icon,
-  ListOrdered,
   Loader2Icon,
-  MoreHorizontal,
-  MoreVertical,
   Pencil,
   PencilLine,
 } from "lucide-react";
@@ -51,13 +47,6 @@ import { Country, ICountry, IState, State } from "country-state-city";
 import axios from "axios";
 import { useToast } from "../ui/use-toast";
 import { AiOutlineShopping } from "react-icons/ai";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import EditCustomerForm from "./EditCustomerForm";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
@@ -108,7 +97,6 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
     });
 
     function onSubmit(values: z.infer<typeof createCustomerFormSchema>) {
-      console.log("CUSTOMERFORMVALUES>>>", values);
       setIsLoading(true);
 
       if (user) {
@@ -220,6 +208,15 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
     setOpen((prev) => !prev);
   };
 
+  const calculateTotalOrderPrice = (user: any) => {
+    let totalPrice = 0;
+
+    user.orders?.forEach((order: any) => {
+      totalPrice += order.totalPrice;
+    });
+    const formattedTotalPriceSum = totalPrice / 100;
+    return formatPrice(formattedTotalPriceSum);
+  };
   return (
     <div className="flex flex-col max-w-[950px] gap-3 mx-auto">
       <div className="flex flex-col mb-5">
@@ -620,11 +617,17 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
               </div>
               <div className="w-1/3 flex flex-col justify-center items-center border-r-2">
                 <span className="font-normal text-xs">Amount spent</span>
-                <span className="font-semibold text-sm">$0.00</span>
+                <span className="font-semibold text-sm">
+                  {calculateTotalOrderPrice(user)}
+                </span>
               </div>
               <div className="w-1/3 flex flex-col justify-center items-center">
-                <span className="font-normal text-xs">Amount spent</span>
-                <span className="font-semibold text-sm">$0.00</span>
+                <span className="font-normal text-xs">
+                  {user.orders.length > 0 ? "orders" : "order"}
+                </span>
+                <span className="font-semibold text-sm">
+                  {user.orders.length}
+                </span>
               </div>
             </div>
             <div className="flex flex-col rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
@@ -638,7 +641,7 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
                         <span>{user.orders[0]?.paymentStatus}</span>
                         <span>{user.orders[0]?.fulfillmentStatus}</span>
                       </div>
-                      <div>{formatPrice(user.orders[0]?.totalPrice)}</div>
+                      <div>{formatPrice(user.orders[0]?.totalPrice / 100)}</div>
                     </div>
                     <div>
                       {moment(user.orders[0]?.createdAt).format(

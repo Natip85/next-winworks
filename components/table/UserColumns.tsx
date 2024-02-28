@@ -41,7 +41,7 @@ export const columns: ColumnDef<any>[] = [
       return (
         <Link
           href={`/customers/${customerId}`}
-          className="font-semibold hover:underline "
+          className="font-semibold hover:underline h-[40px]"
         >
           <span>{allCustomers}</span>
         </Link>
