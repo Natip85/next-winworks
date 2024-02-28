@@ -44,10 +44,10 @@ const RegisterForm = () => {
     },
   });
 
-  useEffect(() => {
-    const isFormValid = form.formState.isValid;
-    setIsLoading(!isFormValid);
-  }, [form.formState.isValid]);
+  // useEffect(() => {
+  //   const isFormValid = form.formState.isValid;
+  //   setIsLoading(!isFormValid);
+  // }, [form.formState.isValid]);
 
   function onSubmit(values: z.infer<typeof registerFormSchema>) {
     setIsLoading(true);

@@ -35,6 +35,7 @@ export default async function handler(
   } catch (err) {
     return res.status(400).send("Webook error" + err);
   }
+
   switch (event.type) {
     case "payment_intent.created":
       const paymentIntent = event.data.object;
