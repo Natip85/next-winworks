@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prismadb from "@/lib/prismadb";
 import bcrypt from "bcryptjs";
+import { User } from "@prisma/client";
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prismadb),
@@ -62,6 +63,37 @@ export const authOptions: AuthOptions = {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  events: {
+    async signIn(message) {
+      const user: any = message.user;
+      // Update user data after successful sign-in
+      // Here you can add the logic to update the user's addresses property
+      // Example:
+      await prismadb.user.update({
+        where: { id: user.id },
+        data: {
+          addresses: [
+            {
+              line1: "",
+              line2: "",
+              city: "",
+              country: "",
+              countryCode: "US",
+              apartment: "",
+              postal_code: "",
+              state: "",
+              firstName: "",
+              lastName: "",
+              fullName: "",
+              phone: "",
+              street: "",
+              userId: user.id,
+            },
+          ],
+        },
+      });
+    },
+  },
 };
 
 export default NextAuth(authOptions);

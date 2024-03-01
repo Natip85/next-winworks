@@ -78,11 +78,11 @@ const CartClient = ({ currentUser, products }: CartClientProps) => {
                                   className="relative rounded-full outline-current w-[14px] h-[14px]"
                                   style={{
                                     backgroundColor:
-                                      product.options[0].name.toLowerCase(),
+                                      product.options[0]?.name.toLowerCase(),
                                   }}
                                 />
                                 <p className="text-xs">
-                                  {product.options[0].name}
+                                  {product.options[0]?.name}
                                 </p>
                               </div>
                             </li>

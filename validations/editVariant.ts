@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const editVariantSchema = z.object({
-  title: z.string().min(2, {
+  title: z.string().min(1, {
     message: "Option name be at least 2 characters long",
   }),
   images: z

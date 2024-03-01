@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { buffer } from "micro";
 import { NextApiRequest, NextApiResponse } from "next";
 import prismadb from "@/lib/prismadb";
+import getCurrentUser from "@/actions/getCurrentUser";
 
 export const config = {
   api: {
@@ -36,26 +37,30 @@ export default async function handler(
     return res.status(400).send("Webook error" + err);
   }
 
+  let finalAddress; // Declare finalAddress outside of the switch block
+
   switch (event.type) {
     case "payment_intent.created":
       const paymentIntent = event.data.object;
+
       console.log("Payment intent was created");
       break;
     case "charge.succeeded":
       const charge: any = event.data.object as Stripe.Charge;
 
       if (typeof charge.payment_intent === "string") {
-        const finalAddress = {
+        finalAddress = {
           ...charge.shipping?.address,
-          countryCode: "",
+          countryCode: "US",
           firstName: "",
           lastName: "",
           fullName: charge.shipping.name,
           phone: "",
           street: "",
           userId: "",
+          apartment: "",
         };
-        await prismadb.order.update({
+        const orderUpdate = await prismadb.order.update({
           where: { paymentIntentId: charge.payment_intent },
           data: {
             paymentStatus: "complete",
@@ -63,6 +68,33 @@ export default async function handler(
             shippingAddress: finalAddress,
           },
         });
+        console.log("IDDD>>>>", orderUpdate);
+        const user = await prismadb.user.findUnique({
+          where: {
+            id: orderUpdate.userId,
+          },
+        });
+        console.log("FOUNDUSER>>", user);
+
+        try {
+          const user = orderUpdate.userId;
+          console.log("THISID>>", user);
+
+          if (user) {
+            const updatedAddresses = [finalAddress];
+            await prismadb.user.update({
+              where: { id: user },
+              data: {
+                addresses: updatedAddresses,
+              },
+            });
+          } else {
+            console.error("Unable to retrieve current user.");
+          }
+        } catch (error) {
+          console.error("Error retrieving current user:", error);
+          return res.status(500).send("Internal Server Error");
+        }
       }
       break;
     default:

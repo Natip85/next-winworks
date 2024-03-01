@@ -1,4 +1,4 @@
-"use client";
+import { Loader2Icon, Pencil, PencilLine } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -32,10 +32,7 @@ interface EditCustomerFormProps {
   user: any;
   handleDialogOpen: () => void;
 }
-const EditCustomerForm = ({
-  user,
-  handleDialogOpen,
-}: EditCustomerFormProps) => {
+const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -45,34 +42,86 @@ const EditCustomerForm = ({
   const useDynamicForm = () => {
     const form = useForm<z.infer<typeof createCustomerFormSchema>>({
       resolver: zodResolver(createCustomerFormSchema),
-      defaultValues: user,
+      defaultValues: user || {
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        addresses: [
+          {
+            line1: "",
+            line2: "",
+            city: "",
+            country: "",
+            countryCode: "",
+            apartment: "",
+            postal_code: "",
+            state: "",
+            firstName: "",
+            lastName: "",
+            fullName: "",
+            phone: "",
+            street: "",
+            userId: "",
+          },
+        ],
+      },
     });
 
     function onSubmit(values: z.infer<typeof createCustomerFormSchema>) {
+      console.log("CUSTOMERFORMVALUES>>>", values);
       setIsLoading(true);
 
-      axios
-        .patch(`/api/register/${user.id}`, values)
-        .then((res) => {
-          toast({
-            variant: "success",
-            description: "Customer updated",
-          });
-          handleDialogOpen();
-          setIsLoading(false);
-          router.push(`/customers/${res.data.id}`);
-          router.refresh();
-        })
-        .catch((err) => {
-          console.log(err);
-          toast({
-            variant: "destructive",
-            description: "Something went wrong",
-          });
-          setIsLoading(false);
-        });
-    }
+      if (user) {
+        // UPDATE
+        const finalData = {
+          ...values,
+        };
+        axios
+          .patch(`/api/register/${user.id}`, finalData)
+          .then((res) => {
+            toast({
+              variant: "success",
+              description: "Customer updated",
+            });
 
+            setIsLoading(false);
+            router.push(`/customers/${res.data.id}`);
+            router.refresh();
+          })
+          .catch((err) => {
+            console.log(err);
+            toast({
+              variant: "destructive",
+              description: "Something went wrong",
+            });
+            setIsLoading(false);
+          });
+      } else {
+        // CREATE
+        const finalData = {
+          ...values,
+          password: "12345678",
+        };
+        axios
+          .post("/api/register", finalData)
+          .then((res) => {
+            toast({
+              variant: "success",
+              description: "Registered succesfully",
+            });
+            router.push(`/customers/${res.data.id}`);
+          })
+          .catch(() => {
+            setIsLoading(false);
+            toast({
+              variant: "destructive",
+              description: "Oops!something went wrong",
+            });
+          })
+          .finally(() => setIsLoading(false));
+      }
+    }
     const { fields } = useFieldArray({
       control: form.control,
       name: "addresses",
@@ -100,7 +149,7 @@ const EditCustomerForm = ({
               <div className="md:flex justify-between gap-2">
                 <FormField
                   control={form.control}
-                  name="firstName"
+                  name="name"
                   render={({ field }) => (
                     <FormItem className="flex-1 ">
                       <FormLabel className="text-xs">First name</FormLabel>

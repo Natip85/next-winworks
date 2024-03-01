@@ -72,6 +72,7 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
       resolver: zodResolver(createCustomerFormSchema),
       defaultValues: user || {
         firstName: "",
+        name: "",
         lastName: "",
         email: "",
         phone: "",
@@ -296,7 +297,7 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
                   <div className="md:flex justify-between gap-2">
                     <FormField
                       control={form.control}
-                      name="firstName"
+                      name="name"
                       render={({ field }) => (
                         <FormItem className="flex-1 ">
                           <FormLabel>First name</FormLabel>
@@ -726,9 +727,7 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
               </div>
               <h4 className="font-semibold text-sm">Address</h4>
               <div className="flex flex-col">
-                <span className="font-normal text-sm">
-                  {user.firstName + " " + user.lastName}
-                </span>
+                <span className="font-normal text-sm">{user.name}</span>
                 <span className="font-normal text-sm">
                   {user.addresses[0]?.line1}
                 </span>

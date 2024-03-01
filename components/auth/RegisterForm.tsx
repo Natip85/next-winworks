@@ -40,7 +40,6 @@ const RegisterForm = () => {
       email: "",
       password: "",
       lastName: "",
-      firstName: "",
     },
   });
 

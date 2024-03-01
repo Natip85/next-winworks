@@ -6,7 +6,7 @@ export async function POST(request: Request) {
   const body = await request.json();
   console.log("BODY>>", body);
 
-  const { firstName, lastName, name, email, password, addresses, phone } = body;
+  const { lastName, name, email, password, addresses, phone } = body;
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
