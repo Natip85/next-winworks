@@ -51,7 +51,7 @@ export default async function handler(
       if (typeof charge.payment_intent === "string") {
         finalAddress = {
           ...charge.shipping?.address,
-          countryCode: "US",
+          countryCode: "",
           firstName: "",
           lastName: "",
           fullName: charge.shipping.name,

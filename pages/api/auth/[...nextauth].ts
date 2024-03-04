@@ -78,7 +78,7 @@ export const authOptions: AuthOptions = {
               line2: "",
               city: "",
               country: "",
-              countryCode: "US",
+              countryCode: "",
               apartment: "",
               postal_code: "",
               state: "",

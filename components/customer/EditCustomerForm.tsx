@@ -39,6 +39,9 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
   const countries = Country.getAllCountries();
   const [selectedCountry, setSelectedCountry] = useState<ICountry>();
   const [availableStates, setAvailableStates] = useState<IState[]>([]);
+  console.log("coutry>>", selectedCountry);
+  console.log("state>>", availableStates);
+
   const useDynamicForm = () => {
     const form = useForm<z.infer<typeof createCustomerFormSchema>>({
       resolver: zodResolver(createCustomerFormSchema),
@@ -130,16 +133,13 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
   };
   const { fields, form, onSubmit } = useDynamicForm();
   useEffect(() => {
-    const currentCountry = form.watch("addresses");
-    if (currentCountry) {
-      const countryStates = State.getAllStates().filter(
-        (state) => state.countryCode === currentCountry[0].countryCode
+    if (selectedCountry) {
+      const statesForCountry = State.getStatesOfCountry(
+        selectedCountry.isoCode
       );
-      if (countryStates) {
-        setAvailableStates(countryStates);
-      }
+      setAvailableStates(statesForCountry);
     }
-  }, [selectedCountry, user, form]);
+  }, [user, selectedCountry]);
   return (
     <div className="max-h-[60vh] overflow-y-auto">
       <Form {...form}>
@@ -233,15 +233,15 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
                             <Select
                               onValueChange={(value) => {
                                 // Get the country code based on the selected country name
-                                const selectedCountry = countries.find(
+                                const theSelectedCountry = countries.find(
                                   (country) => country.name === value
                                 );
-                                if (selectedCountry) {
+                                if (theSelectedCountry) {
                                   form.setValue(
                                     `addresses.${index}.countryCode`,
-                                    selectedCountry.isoCode
+                                    theSelectedCountry.isoCode
                                   );
-                                  setSelectedCountry(selectedCountry);
+                                  setSelectedCountry(theSelectedCountry);
                                 }
                                 field.onChange(value);
                               }}

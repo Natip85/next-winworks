@@ -159,27 +159,15 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
 
   const { fields, form, onSubmit } = useDynamicForm();
   useEffect(() => {
-    if (user) {
-      const currentCountry = form.watch("addresses");
-      if (currentCountry) {
-        const countryStates = State.getAllStates().filter(
-          (state) => state.countryCode === currentCountry[0]?.countryCode
-        );
-        if (countryStates) {
-          setAvailableStates(countryStates);
-        }
-      }
+    if (selectedCountry) {
+      const statesForCountry = State.getStatesOfCountry(
+        selectedCountry.isoCode
+      );
+      setAvailableStates(statesForCountry);
     } else {
-      if (selectedCountry) {
-        const statesForCountry = State.getStatesOfCountry(
-          selectedCountry.isoCode
-        );
-        setAvailableStates(statesForCountry);
-      } else {
-        setAvailableStates([]);
-      }
+      setAvailableStates([]);
     }
-  }, [selectedCountry, user, form]);
+  }, [selectedCountry]);
   const handleLeavePage = () => {
     if (pathname === "/customers/new") {
       if (Object.keys(form.formState.touchedFields).length > 0) {
