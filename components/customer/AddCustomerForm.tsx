@@ -260,7 +260,7 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
             </DialogContent>
           </Dialog>
           <div className="font-bold text-2xl ml-2">
-            {user ? user.name : "New customer"}
+            {user ? user.firstName : "New customer"}
           </div>
         </div>
         {user && (
@@ -715,7 +715,11 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
               </div>
               <h4 className="font-semibold text-sm">Address</h4>
               <div className="flex flex-col">
-                <span className="font-normal text-sm">{user.name}</span>
+                <span className="font-normal text-sm">
+                  {user.addresses[0]?.firstName +
+                    " " +
+                    user.addresses[0]?.lastName}
+                </span>
                 <span className="font-normal text-sm">
                   {user.addresses[0]?.line1}
                 </span>
@@ -726,7 +730,9 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
                 <span className="font-normal text-sm">
                   {user.addresses[0]?.country}
                 </span>
-                <span className="font-normal text-sm">{user.phone}</span>
+                <span className="font-normal text-sm">
+                  {user.addresses[0]?.phone}
+                </span>
               </div>
             </div>
           </div>

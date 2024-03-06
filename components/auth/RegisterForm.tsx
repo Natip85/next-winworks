@@ -39,7 +39,6 @@ const RegisterForm = () => {
       name: "",
       email: "",
       password: "",
-      lastName: "",
     },
   });
 
@@ -93,22 +92,6 @@ const RegisterForm = () => {
         </span>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel className="text-sm w-full hover:cursor-pointer">
-                    Email
-                  </FormLabel>
-                  <FormControl>
-                    <Input {...field} className="w-full" />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <div className="flex gap-3">
               <FormField
                 control={form.control}
@@ -116,7 +99,7 @@ const RegisterForm = () => {
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel className="text-sm w-full hover:cursor-pointer ">
-                      First name
+                      Full name
                     </FormLabel>
                     <FormControl>
                       <Input {...field} className="w-full" />
@@ -143,6 +126,22 @@ const RegisterForm = () => {
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel className="text-sm w-full hover:cursor-pointer">
+                    Email
+                  </FormLabel>
+                  <FormControl>
+                    <Input {...field} className="w-full" />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <p className="mt-3 text-muted-foreground">
               Enter your first and last name as they appear on your
               government-issued ID.

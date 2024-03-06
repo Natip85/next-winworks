@@ -133,15 +133,18 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
   };
   const { fields, form, onSubmit } = useDynamicForm();
   useEffect(() => {
-    if (selectedCountry) {
-      const statesForCountry = State.getStatesOfCountry(
-        selectedCountry.isoCode
-      );
-      setAvailableStates(statesForCountry);
-    }
-  }, [user, selectedCountry]);
+    const usersCountry = countries.find(
+      (country) => country.name === user.addresses[0].country
+    );
+    setSelectedCountry(usersCountry);
+  }, []);
+
+  useEffect(() => {
+    const statesForCountry = State.getStatesOfCountry(selectedCountry?.isoCode);
+    setAvailableStates(statesForCountry);
+  }, [selectedCountry]);
   return (
-    <div className="max-h-[60vh] overflow-y-auto">
+    <div className="max-h-[55vh] overflow-y-auto">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="bg-white">
@@ -149,7 +152,7 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
               <div className="md:flex justify-between gap-2">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="firstName"
                   render={({ field }) => (
                     <FormItem className="flex-1 ">
                       <FormLabel className="text-xs">First name</FormLabel>
@@ -242,7 +245,9 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
                                     theSelectedCountry.isoCode
                                   );
                                   setSelectedCountry(theSelectedCountry);
+                                  setAvailableStates([]);
                                 }
+
                                 field.onChange(value);
                               }}
                               value={field.value}
@@ -353,9 +358,7 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
                             <FormLabel className="text-xs">State</FormLabel>
                             <Select
                               value={field.value}
-                              defaultValue={
-                                user ? user.addresses[0].state : field.value
-                              }
+                              defaultValue={field.value}
                               onValueChange={(selectedState) => {
                                 field.onChange(selectedState);
                               }}

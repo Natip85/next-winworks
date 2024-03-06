@@ -69,27 +69,42 @@ export const authOptions: AuthOptions = {
       // Update user data after successful sign-in
       // Here you can add the logic to update the user's addresses property
       // Example:
+      console.log("USER>>>", user);
+
+      const nameParts = user.name.split(" ");
+
       await prismadb.user.update({
         where: { id: user.id },
         data: {
-          addresses: [
-            {
-              line1: "",
-              line2: "",
-              city: "",
-              country: "",
-              countryCode: "",
-              apartment: "",
-              postal_code: "",
-              state: "",
-              firstName: "",
-              lastName: "",
-              fullName: "",
-              phone: "",
-              street: "",
-              userId: user.id,
-            },
-          ],
+          // name: user.name,
+          firstName: nameParts[0],
+          lastName: nameParts.slice(1).join(" "),
+          hashedPassword: user.hashedPassword ? user.hashedPassword : "123",
+          addresses:
+            user.addresses.length > 0
+              ? user.addresses
+              : [
+                  {
+                    line1: "",
+                    line2: "",
+                    city: "",
+                    country: "",
+                    countryCode: "",
+                    apartment: "",
+                    postal_code: "",
+                    state: "",
+                    firstName: "",
+                    lastName: "",
+                    fullName: "",
+                    phone: "",
+                    street: "",
+                    userId: user.id,
+                  },
+                ],
+          phone: "",
+          ordersCount: 0,
+          emailVerified: user.emailVerified ? user.emailVerified : null,
+          image: user.image ? user.image : "",
         },
       });
     },

@@ -7,6 +7,7 @@ export async function PATCH(
 ) {
   try {
     const body = await request.json();
+    console.log("BIDY>>>", body);
 
     if (!params.registerId) {
       return new NextResponse("registerId is required", { status: 400 });
@@ -15,7 +16,7 @@ export async function PATCH(
       where: {
         id: params.registerId,
       },
-      data: { ...body },
+      data: { ...body, name: body.firstName + " " + body.lastName },
       include: {
         orders: true,
         reviews: true,
