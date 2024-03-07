@@ -629,7 +629,7 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
             <div className="flex flex-col rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
               <h2 className="font-semibold mb-3">Last order placed</h2>
               {user.orders.length > 0 ? (
-                <>
+                <div>
                   <div className="p-3 border border-b-0">
                     <div className="flex justify-between items-center">
                       <div className="w-3/4 flex gap-3 items-center">
@@ -709,7 +709,15 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
                       </div>
                     </div>
                   ))}
-                </>
+                  <div className="flex items-center justify-end mt-5">
+                    <Button
+                      onClick={() => router.push("/orders/new")}
+                      size={"sm"}
+                    >
+                      Create order
+                    </Button>
+                  </div>
+                </div>
               ) : (
                 <div>
                   <div className="text-sm text-muted-foreground mb-3">

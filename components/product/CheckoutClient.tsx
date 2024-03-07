@@ -48,7 +48,6 @@ const CheckoutClient = () => {
           return res.json();
         })
         .then((data) => {
-          console.log("DATA>>>>", data);
           setLoading(false);
           setClientSecret(data.paymentIntent.client_secret);
           handleSetPaymentIntent(data.paymentIntent.id);
