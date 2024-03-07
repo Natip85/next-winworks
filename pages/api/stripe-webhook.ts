@@ -2,7 +2,6 @@ import Stripe from "stripe";
 import { buffer } from "micro";
 import { NextApiRequest, NextApiResponse } from "next";
 import prismadb from "@/lib/prismadb";
-import getCurrentUser from "@/actions/getCurrentUser";
 
 export const config = {
   api: {

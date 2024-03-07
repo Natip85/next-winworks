@@ -26,11 +26,13 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
+  console.log("BODY>>>", body);
+
   const { items, payment_intent_id } = body;
   const total = calculateOrderAmount(items) * 100;
 
   const orderData = {
-    user: { connect: { id: currentUser?.id } },
+    user: { connect: { id: currentUser.id } },
     totalPrice: total,
     currency: "usd",
     paymentStatus: "pending",
@@ -59,11 +61,11 @@ export async function POST(request: Request) {
       //Fetch order with product ids
       const [existing_order, updated_order] = await Promise.all([
         prismadb.order.findFirst({
-          where: { paymentIntentId: updated_intent.id },
+          where: { paymentIntentId: payment_intent_id },
           // include: { products: true },
         }),
         prismadb.order.update({
-          where: { paymentIntentId: updated_intent.id },
+          where: { paymentIntentId: payment_intent_id },
           data: {
             totalPrice: total,
             products: items,
