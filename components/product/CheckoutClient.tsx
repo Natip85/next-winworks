@@ -30,6 +30,8 @@ const CheckoutClient = () => {
   } = useCart();
 
   useEffect(() => {
+    console.log("iniate CheckoutClient ", { cartProducts });
+
     if (cartProducts) {
       setLoading(true);
       setError(false);
@@ -62,7 +64,7 @@ const CheckoutClient = () => {
           });
         });
     }
-  }, [cartProducts, paymentIntent]);
+  }, []);
 
   const options: StripeElementsOptions = {
     clientSecret,
