@@ -45,7 +45,6 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
   const [productQuantities, setProductQuantities] = useState<{
     [key: string]: number;
   }>({});
-  console.log({ users });
 
   const handleCheckboxChange = (productId: string) => {
     const isSelected = selectedProducts.some(

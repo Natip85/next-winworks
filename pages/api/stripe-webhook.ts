@@ -67,17 +67,14 @@ export default async function handler(
             shippingAddress: finalAddress,
           },
         });
-        console.log("IDDD>>>>", orderUpdate);
         const user = await prismadb.user.findUnique({
           where: {
             id: orderUpdate.userId,
           },
         });
-        console.log("FOUNDUSER>>", user);
 
         try {
           const user = orderUpdate.userId;
-          console.log("THISID>>", user);
 
           if (user) {
             const updatedAddresses = [finalAddress];

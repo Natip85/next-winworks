@@ -26,11 +26,8 @@ const CheckoutClient = () => {
     handleSetPaymentIntent,
     cartTotalAmount,
   } = useCart();
-  console.log("PAYINTENT>>>", paymentIntent);
 
   useEffect(() => {
-    console.log("iniate CheckoutClient ", { cartProducts });
-
     if (cartProducts) {
       setLoading(true);
       setError(false);
@@ -66,7 +63,7 @@ const CheckoutClient = () => {
           });
         });
     }
-  }, []);
+  }, [paymentIntent, cartProducts]);
 
   const options: StripeElementsOptions = {
     clientSecret,

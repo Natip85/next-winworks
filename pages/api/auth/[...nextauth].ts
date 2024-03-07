@@ -69,7 +69,6 @@ export const authOptions: AuthOptions = {
       // Update user data after successful sign-in
       // Here you can add the logic to update the user's addresses property
       // Example:
-      console.log("USER>>>", user);
 
       const nameParts = user.name.split(" ");
 

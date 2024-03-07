@@ -51,6 +51,14 @@ import EditCustomerForm from "./EditCustomerForm";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import moment from "moment";
+import { Badge } from "../ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import Link from "next/link";
 
 interface AddCustomerFormProps {
   user: any;
@@ -183,7 +191,6 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
       }
     }
   };
-  console.log({ user });
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(user.email.toString());
@@ -625,17 +632,58 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
                 <>
                   <div className="p-3 border border-b-0">
                     <div className="flex justify-between items-center">
-                      <div className="w-3/4 flex gap-3">
-                        <span>{user.orders[0]?.id}</span>
-                        <span>{user.orders[0]?.paymentStatus}</span>
-                        <span>{user.orders[0]?.fulfillmentStatus}</span>
+                      <div className="w-3/4 flex gap-3 items-center">
+                        <span>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Link href={""}>
+                                  <span className="text-sm font-semibold hover:cursor-pointer hover:underline">
+                                    {user.orders[0]?.id.substring(0, 6)}
+                                    ...
+                                  </span>
+                                </Link>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{user.orders[user.orders.length - 1]?.id}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </span>
+                        <span>
+                          <Badge
+                            variant={
+                              user.orders[user.orders.length - 1]
+                                ?.paymentStatus === "complete"
+                                ? "success"
+                                : "secondary"
+                            }
+                          >
+                            {user.orders[user.orders.length - 1]
+                              ?.paymentStatus === "complete"
+                              ? "paid"
+                              : "pending"}
+                          </Badge>
+                        </span>
+                        <span>
+                          <Badge>
+                            {
+                              user.orders[user.orders.length - 1]
+                                ?.fulfillmentStatus
+                            }
+                          </Badge>
+                        </span>
                       </div>
-                      <div>{formatPrice(user.orders[0]?.totalPrice / 100)}</div>
+                      <div>
+                        {formatPrice(
+                          user.orders[user.orders.length - 1]?.totalPrice / 100
+                        )}
+                      </div>
                     </div>
                     <div>
-                      {moment(user.orders[0]?.createdAt).format(
-                        "MMMM Do YYYY, h:mm:ss a"
-                      )}
+                      {moment(
+                        user.orders[user.orders.length - 1]?.createdAt
+                      ).format("MMMM Do YYYY, h:mm:ss a")}
                     </div>
                   </div>
                   {user.orders[0]?.products.map((product: any) => (
