@@ -2,7 +2,14 @@
 import { FulfillmentStatusLabel, Order, Product, User } from "@prisma/client";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { ArrowLeft, ChevronsUpDown, Clipboard, Trash2, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronsUpDown,
+  Clipboard,
+  Edit3Icon,
+  Trash2,
+  X,
+} from "lucide-react";
 import { FaTruckFast } from "react-icons/fa6";
 import { CiBookmarkCheck } from "react-icons/ci";
 import {
@@ -26,6 +33,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "../ui/dialog";
 import { useRouter } from "next/navigation";
 import AddCustomerToOrder from "./AddCustomerToOrder";
@@ -34,6 +42,7 @@ import { useToast } from "../ui/use-toast";
 import axios from "axios";
 import { Badge } from "../ui/badge";
 import moment from "moment";
+import EditCustomerForm from "../customer/EditCustomerForm";
 
 interface AddOrderFormProps {
   order: OrderWithUser | null;
@@ -51,6 +60,7 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
   const router = useRouter();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   const [leave, setLeave] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
@@ -168,7 +178,9 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
       });
     }
   };
-
+  const handleDialogOpen = () => {
+    setDialogOpen((prev) => !prev);
+  };
   return (
     <div>
       <div className="flex flex-col max-w-[950px] gap-3 mx-auto">
@@ -349,9 +361,11 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                     <div className=" w-1/3">
                       <span className="font-semibold">Total</span>
                     </div>
-                    <div className="flex-1 justify-between flex">
-                      <span>{order.itemCount} items</span>
-                      <span>{formatPrice(order.totalPrice / 100)}</span>
+                    <div className="flex-1 justify-end flex">
+                      {/* <span>{order.itemCount} items</span> */}
+                      <span className="font-semibold">
+                        {formatPrice(order.totalPrice / 100)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -632,7 +646,40 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                       </p>
                     </div>
                     <div>
-                      <h3 className="font-medium mb-2">Contact information</h3>
+                      {/* <h3 className="font-medium mb-2">
+                        Contact information
+                      </h3> */}
+                      <div className="flex items-center justify-between mb-3">
+                        <h2 className="font-semibold">Contact information</h2>
+                        <span>
+                          <Dialog
+                            open={dialogOpen}
+                            onOpenChange={setDialogOpen}
+                          >
+                            <DialogTrigger asChild>
+                              <Button
+                                size={"xs"}
+                                type="button"
+                                variant={"ghost"}
+                              >
+                                <Edit3Icon className="size-4" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="bg-gray-200 max-w-[900px] w-[90%] p-0 overflow-hidden">
+                              <DialogHeader className="px-2">
+                                <DialogTitle className="pt-3">
+                                  Edit customer
+                                </DialogTitle>
+                              </DialogHeader>
+                              <EditCustomerForm
+                                user={selectedCustomer}
+                                handleDialogOpen={handleDialogOpen}
+                                handleSetSelectedCustomer={setSelectedCustomer}
+                              />
+                            </DialogContent>
+                          </Dialog>
+                        </span>
+                      </div>
                       <div
                         className="flex items-center justify-between text-sm mb-3 hover:cursor-pointer"
                         onClick={handleCopyEmail}

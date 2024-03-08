@@ -59,7 +59,7 @@ export const columns: ColumnDef<any>[] = [
       const order = row.original;
       const orderDate = order.createdAt;
 
-      return <span>{moment(orderDate).format("MMMM Do YYYY, h:mm:ss a")}</span>;
+      return <span>{moment(orderDate).format("M/D/Y")}</span>;
     },
   },
   {

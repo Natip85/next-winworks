@@ -31,8 +31,12 @@ import { Country, ICountry, IState, State } from "country-state-city";
 interface EditCustomerFormProps {
   user: any;
   handleDialogOpen: () => void;
+  handleSetSelectedCustomer?: (value: any) => void;
 }
-const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
+const EditCustomerForm = ({
+  user,
+  handleSetSelectedCustomer,
+}: EditCustomerFormProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -83,9 +87,14 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
               variant: "success",
               description: "Customer updated",
             });
+            console.log("RES<>>>>", res);
 
             setIsLoading(false);
-            router.push(`/customers/${res.data.id}`);
+
+            if (handleSetSelectedCustomer) {
+              handleSetSelectedCustomer(res.data);
+            }
+
             router.refresh();
           })
           .catch((err) => {
