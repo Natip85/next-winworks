@@ -99,7 +99,7 @@ const RegisterForm = () => {
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel className="text-sm w-full hover:cursor-pointer ">
-                      Full name
+                      First name
                     </FormLabel>
                     <FormControl>
                       <Input {...field} className="w-full" />

@@ -7,6 +7,7 @@ export async function PATCH(
 ) {
   try {
     const body = await request.json();
+    console.log("registerBody>>>", body);
 
     if (!params.registerId) {
       return new NextResponse("registerId is required", { status: 400 });

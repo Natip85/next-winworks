@@ -71,15 +71,13 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
     });
 
     function onSubmit(values: z.infer<typeof createCustomerFormSchema>) {
+      console.log("EDITFORMVALS>>>", values);
+
       setIsLoading(true);
 
       if (user) {
-        // UPDATE
-        const finalData = {
-          ...values,
-        };
         axios
-          .patch(`/api/register/${user.id}`, finalData)
+          .patch(`/api/register/${user.id}`, values)
           .then((res) => {
             toast({
               variant: "success",
@@ -99,30 +97,6 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
             setIsLoading(false);
           });
       }
-      // else {
-      //   // CREATE
-      //   const finalData = {
-      //     ...values,
-      //     password: "12345678",
-      //   };
-      //   axios
-      //     .post("/api/register", finalData)
-      //     .then((res) => {
-      //       toast({
-      //         variant: "success",
-      //         description: "Registered succesfully",
-      //       });
-      //       router.push(`/customers/${res.data.id}`);
-      //     })
-      //     .catch(() => {
-      //       setIsLoading(false);
-      //       toast({
-      //         variant: "destructive",
-      //         description: "Oops!something went wrong",
-      //       });
-      //     })
-      //     .finally(() => setIsLoading(false));
-      // }
     }
     const { fields } = useFieldArray({
       control: form.control,
@@ -145,7 +119,7 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
   return (
     <div className="max-h-[55vh] overflow-y-auto">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form>
           <div className="bg-white">
             <div className="flex-1  bg-white p-2 mb-3">
               <div className="md:flex justify-between gap-2">
@@ -420,8 +394,10 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
               </div>
             </div>
             <Separator className="my-5 h-[2px]" />
-            <div className="bg-white flex justify-end px-4 py-1">
-              <Button>Save</Button>
+            <div className="sticky bottom-0 bg-white flex justify-end px-4 py-1">
+              <Button type="button" onClick={form.handleSubmit(onSubmit)}>
+                Save
+              </Button>
             </div>
           </div>
         </form>

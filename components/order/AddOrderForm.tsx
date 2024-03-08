@@ -99,7 +99,7 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
       quantity: productQuantities[product.id] || 1,
     })),
     fulfillmentStatus: "Unfullfilled",
-    paymentStatus: "pending",
+    paymentStatus: "complete",
     itemCount: selectedProducts.length,
     shippingAddress: {},
     shippingPrice: 0,
