@@ -207,7 +207,7 @@ function OrderTable<TData, TValue>({
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
+                  <TableRow key={row.id} className="h-[50px]">
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="px-3 py-1">
                         {flexRender(
