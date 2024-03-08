@@ -60,6 +60,7 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
   const [selectedCustomer, setSelectedCustomer] = useState<userWithOrders>();
   console.log("selectedCustomer>>>", selectedCustomer);
   console.log("selectedProducts>>>", selectedProducts);
+  console.log("ORDER>>>", order);
 
   const handleCheckboxChange = (productId: string) => {
     const isSelected = selectedProducts.some(
@@ -159,6 +160,13 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
         description: "Email is not available",
       });
     }
+    if (order?.email) {
+      navigator.clipboard.writeText(order.email.toString());
+      toast({
+        variant: "success",
+        description: "Copied to clipboard",
+      });
+    }
   };
 
   return (
@@ -251,11 +259,50 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                 >
                   <FaTruckFast className="size-4" /> {order.fulfillmentStatus}
                 </Badge>
-                <div className="border p-3 rounded-md flex flex-col">
+                <div className="border p-3 rounded-md rounded-b-none flex flex-col">
                   <span className="text-muted-foreground">DHL Express</span>
                   <span className="text-sky-700 underline hover:cursor-pointer">
                     6899028847
                   </span>
+                </div>
+                <div className="border p-3 rounded-md rounded-t-none flex flex-col gap-3">
+                  {order.products.map((product) => (
+                    <div key={product.id} className="flex">
+                      <div className="flex-1 flex gap-3">
+                        <div className="relative aspect-video size-10">
+                          <Image
+                            src={product.images[0].url}
+                            alt={product.title}
+                            fill
+                            sizes="20"
+                            className="object-cover rounded-md"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-sm">{product.title}</span>
+                          <span className="text-xs text-muted-foreground">
+                            SKU: {product.sku}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            Discount: {product.sku}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex-1 flex justify-between">
+                        <span className="flex items-center h-fit text-sm gap-2">
+                          <span className="line-through text-muted-foreground">
+                            {formatPrice(product.comparePriceAt!)}
+                          </span>
+                          <span> {formatPrice(product.price)}</span>{" "}
+                          <X className="size-3" />
+                          <span>{product.quantity}</span>
+                        </span>
+                        <span className="text-sm">
+                          {formatPrice(product.price * product.quantity)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -267,17 +314,105 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                   <CiBookmarkCheck className="size-4" />
                   {order.paymentStatus === "complete" ? "paid" : "pending"}
                 </Badge>
-                <div className="border p-3 rounded-md flex flex-col">
-                  <span className="text-muted-foreground">DHL Express</span>
-                  <span className="text-sky-700 underline hover:cursor-pointer">
-                    6899028847
-                  </span>
+                <div className="border p-3 rounded-md flex flex-col gap-3">
+                  <div className="flex justify-between">
+                    <div className="w-1/3">
+                      <span>Subtotal</span>
+                    </div>
+                    <div className="flex-1 justify-between flex">
+                      <span>{order.itemCount} items</span>
+                      <span>{formatPrice(order.totalPrice / 100)}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <div className="w-1/3">
+                      <span>Discounts</span>
+                    </div>
+                    <div className="flex-1 justify-between flex">
+                      <span className="text-sm">No discounts</span>
+                      <span>-{formatPrice(order.shippingPrice)}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <div className="w-1/3">
+                      <span>Shipping</span>
+                    </div>
+                    <div className="flex-1 justify-between flex">
+                      <span className="text-sm">
+                        Your order will be delivered in 4-8 business days (Items
+                        0.553 kg)
+                      </span>
+                      <span>{formatPrice(order.shippingPrice)}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <div className=" w-1/3">
+                      <span className="font-semibold">Total</span>
+                    </div>
+                    <div className="flex-1 justify-between flex">
+                      <span>{order.itemCount} items</span>
+                      <span>{formatPrice(order.totalPrice / 100)}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
             <div className="flex-1">
               <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
-                side sec 1
+                <h2 className="font-semibold">Customer</h2>
+                <div className="mb-5">
+                  <p>
+                    <Link
+                      href={""}
+                      className="text-sky-600 text-sm font-medium hover:underline"
+                    >
+                      {order.shippingAddress?.fullName ||
+                        order.shippingAddress?.firstName +
+                          " " +
+                          order.shippingAddress?.lastName}
+                    </Link>
+                  </p>
+                  <p className="text-sm">
+                    {/* {selectedCustomer.orders.length
+                      ? selectedCustomer.orders.length + " orders"
+                      : "No orders"} */}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-medium mb-2">Contact information</h3>
+                  <div
+                    className="flex items-center justify-between text-sm mb-3 hover:cursor-pointer"
+                    onClick={handleCopyEmail}
+                  >
+                    <span className="w-[90%] break-all text-sky-600 text-sm font-medium hover:underline">
+                      {order.email}sss
+                    </span>
+                    <span>
+                      <Clipboard className="size-4 " />
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-medium mb-2">Shipping address</h3>
+                  <p className="text-sm">
+                    {order.shippingAddress?.fullName ||
+                      order.shippingAddress?.firstName +
+                        " " +
+                        order.shippingAddress?.lastName}
+                    <br />
+                    {order.shippingAddress?.line1}
+                    <br />
+                    {order.shippingAddress?.apartment}{" "}
+                    {order.shippingAddress?.city +
+                      " " +
+                      order.shippingAddress?.state +
+                      " " +
+                      order.shippingAddress?.postal_code}
+                    <br />
+                    {order.shippingAddress?.country}
+                    addres here
+                  </p>
+                </div>
               </div>
             </div>
           </div>
