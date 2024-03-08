@@ -5,6 +5,7 @@ import Link from "next/link";
 import moment from "moment";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "../ui/badge";
+import { FulfillmentStatusLabel } from "@prisma/client";
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -59,7 +60,7 @@ export const columns: ColumnDef<any>[] = [
       const order = row.original;
       const orderDate = order.createdAt;
 
-      return <span>{moment(orderDate).format("M/D/Y")}</span>;
+      return <span>{moment(orderDate).format("MMMM Do YYYY, h:mm:ss a")}</span>;
     },
   },
   {
@@ -95,6 +96,44 @@ export const columns: ColumnDef<any>[] = [
           <Badge variant={payStatus === "complete" ? "secondary" : "warning"}>
             {payStatus === "complete" ? "paid" : "pending"}
           </Badge>
+        </span>
+      );
+    },
+  },
+  {
+    header: "Fulfillment status",
+    accessorKey: "fulfillmentStatus",
+    cell: ({ row }) => {
+      const order = row.original;
+      const fulfillmentStatus = order.fulfillmentStatus;
+
+      return (
+        <span>
+          <Badge
+            variant={
+              fulfillmentStatus === FulfillmentStatusLabel.FULFILLED
+                ? "success"
+                : "secondary"
+            }
+          >
+            {fulfillmentStatus}
+          </Badge>
+        </span>
+      );
+    },
+  },
+  {
+    header: "Items",
+    accessorKey: "",
+    cell: ({ row }) => {
+      const order = row.original;
+      console.log("THIS?", order);
+
+      return (
+        <span>
+          {order.itemCount === 1
+            ? `${order.itemCount} item`
+            : `${order.itemCount} items`}
         </span>
       );
     },
