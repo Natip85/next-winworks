@@ -393,9 +393,14 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
                 ))}
               </div>
             </div>
-            <Separator className="my-5 h-[2px]" />
-            <div className="sticky bottom-0 bg-white flex justify-end px-4 py-1">
-              <Button type="button" onClick={form.handleSubmit(onSubmit)}>
+
+            <div className="sticky bottom-0 bg-white flex flex-col justify-end">
+              <Separator className="mb-3 h-[2px]" />
+              <Button
+                type="button"
+                onClick={form.handleSubmit(onSubmit)}
+                className="w-fit self-end my-1 mx-3"
+              >
                 Save
               </Button>
             </div>
