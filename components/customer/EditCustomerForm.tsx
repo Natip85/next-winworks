@@ -39,6 +39,7 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
   const countries = Country.getAllCountries();
   const [selectedCountry, setSelectedCountry] = useState<ICountry>();
   const [availableStates, setAvailableStates] = useState<IState[]>([]);
+  console.log("USER>>", user);
 
   const useDynamicForm = () => {
     const form = useForm<z.infer<typeof createCustomerFormSchema>>({
@@ -97,30 +98,31 @@ const EditCustomerForm = ({ user }: EditCustomerFormProps) => {
             });
             setIsLoading(false);
           });
-      } else {
-        // CREATE
-        const finalData = {
-          ...values,
-          password: "12345678",
-        };
-        axios
-          .post("/api/register", finalData)
-          .then((res) => {
-            toast({
-              variant: "success",
-              description: "Registered succesfully",
-            });
-            router.push(`/customers/${res.data.id}`);
-          })
-          .catch(() => {
-            setIsLoading(false);
-            toast({
-              variant: "destructive",
-              description: "Oops!something went wrong",
-            });
-          })
-          .finally(() => setIsLoading(false));
       }
+      // else {
+      //   // CREATE
+      //   const finalData = {
+      //     ...values,
+      //     password: "12345678",
+      //   };
+      //   axios
+      //     .post("/api/register", finalData)
+      //     .then((res) => {
+      //       toast({
+      //         variant: "success",
+      //         description: "Registered succesfully",
+      //       });
+      //       router.push(`/customers/${res.data.id}`);
+      //     })
+      //     .catch(() => {
+      //       setIsLoading(false);
+      //       toast({
+      //         variant: "destructive",
+      //         description: "Oops!something went wrong",
+      //       });
+      //     })
+      //     .finally(() => setIsLoading(false));
+      // }
     }
     const { fields } = useFieldArray({
       control: form.control,

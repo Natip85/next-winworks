@@ -2,7 +2,14 @@
 import { Order, Product, User } from "@prisma/client";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { ArrowLeft, ChevronsUpDown, PlusCircle, Trash2, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronsUpDown,
+  Clipboard,
+  PlusCircle,
+  Trash2,
+  X,
+} from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -26,6 +33,9 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { useRouter } from "next/navigation";
+import AddCustomerToOrder from "./AddCustomerToOrder";
+import Link from "next/link";
+import { useToast } from "../ui/use-toast";
 
 interface AddOrderFormProps {
   order: OrderWithUser | null;
@@ -38,6 +48,7 @@ export type OrderWithUser = Order & {
 
 const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
   const router = useRouter();
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   const [leave, setLeave] = useState(false);
@@ -45,6 +56,8 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
   const [productQuantities, setProductQuantities] = useState<{
     [key: string]: number;
   }>({});
+  const [selectedCustomer, setSelectedCustomer] = useState<User>();
+  console.log("selectedCustomer>>>", selectedCustomer);
 
   const handleCheckboxChange = (productId: string) => {
     const isSelected = selectedProducts.some(
@@ -80,25 +93,47 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
     return acc + prod.price * quantity;
   }, 0);
 
-  const onSubmit = () => {
-    const finalData = {
-      products: selectedProducts.map((product) => ({
-        ...product,
-        quantity: productQuantities[product.id] || 1,
-      })),
-      fulfillmentStatus: "Unfullfilled",
-      paymentStatus: "complete",
-      itemCount: selectedProducts.length,
-      shippingPrice: 0,
-      subtotalPrice: total,
-      currency: "usd",
-      taxPrice: 0,
-      totalDiscounts: 0,
-      totalPrice: total,
-      deliveryStatus: "dispatched",
-      paymentIntentId: "123intent",
-      email: "",
-    };
+  const finalData = {
+    products: selectedProducts.map((product) => ({
+      ...product,
+      quantity: productQuantities[product.id] || 1,
+    })),
+    fulfillmentStatus: "Unfullfilled",
+    paymentStatus: "pending",
+    itemCount: selectedProducts.length,
+    shippingAddress: {},
+    shippingPrice: 0,
+    subtotalPrice: total,
+    currency: "usd",
+    taxPrice: 0,
+    totalDiscounts: 0,
+    totalPrice: total,
+    deliveryStatus: "dispatched",
+    paymentIntentId: "123intent",
+    email: "",
+    userId: "",
+  };
+  console.log("finalData>>", finalData);
+  const onSubmit = () => {};
+
+  const handleSetSelectedCustomer = (val: any) => {
+    console.log("RECEIVED VALUE>>", val);
+    setSelectedCustomer(val);
+  };
+
+  const handleCopyEmail = () => {
+    if (selectedCustomer && selectedCustomer.email) {
+      navigator.clipboard.writeText(selectedCustomer.email.toString());
+      toast({
+        variant: "success",
+        description: "Copied to clipboard",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        description: "Email is not available",
+      });
+    }
   };
 
   return (
@@ -341,60 +376,77 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
           </div>
           <div className="flex-1 ">
             <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
-              <h2 className="font-semibold mb-3">Customer</h2>
-              <Popover open={open2} onOpenChange={setOpen2}>
-                <PopoverTrigger asChild className="w-full">
+              <h2 className="font-semibold mb-3 flex justify-between">
+                Customer
+                {selectedCustomer && (
                   <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="justify-between font-normal"
+                    size={"xs"}
+                    variant={"ghost"}
+                    onClick={() => setSelectedCustomer(undefined)}
                   >
-                    Search or create a customer
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    <X className="size-4" />
                   </Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <Command>
-                    <div className="p-3 flex items-center justify-between gap-5">
-                      <div className="flex-1">
-                        <CommandInput placeholder="Search a customer" />
-                      </div>
-                    </div>
-                    <div className="p-1">
-                      <Button
-                        variant={"secondary"}
-                        className="flex items-center gap-3 w-full"
+                )}
+              </h2>
+              {selectedCustomer ? (
+                <div>
+                  <div className="mb-5">
+                    <p>
+                      <Link
+                        href={""}
+                        className="text-sky-600 text-sm font-medium hover:underline"
                       >
-                        <PlusCircle /> Create a new customer
-                      </Button>
+                        {selectedCustomer.name}
+                      </Link>
+                    </p>
+                    <p className="text-sm">
+                      {selectedCustomer.ordersCount
+                        ? selectedCustomer.ordersCount + " orders"
+                        : "No orders"}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-2">Contact information</h3>
+                    <div
+                      className="flex items-center justify-between text-sm mb-3 hover:cursor-pointer"
+                      onClick={handleCopyEmail}
+                    >
+                      <span className="w-[90%] break-all text-sky-600 text-sm font-medium hover:underline">
+                        {selectedCustomer.email}
+                      </span>
+                      <span>
+                        <Clipboard className="size-4 " />
+                      </span>
                     </div>
-                    <CommandEmpty>No customer found.</CommandEmpty>
-                    <CommandGroup className="flex flex-col gap-3 h-[200px] overflow-y-auto">
-                      {users.map((user: any, i: number) => (
-                        <CommandItem key={user.id} className="cursor-pointer">
-                          <div className="w-full flex flex-col">
-                            <span className="font-normal">{user.name}</span>
-                            <span className="font-normal text-muted-foreground">
-                              {user.email}
-                            </span>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                    <div className="p-3 flex justify-end border-t-2">
-                      <Button
-                        size={"sm"}
-                        onClick={() => {
-                          setOpen2(!open2);
-                        }}
-                      >
-                        Done
-                      </Button>
-                    </div>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-2">Shipping address</h3>
+                    <p className="text-sm">
+                      {selectedCustomer.addresses[0].fullName}
+                      <br />
+                      {selectedCustomer.addresses[0].line1}
+                      <br />
+                      {selectedCustomer.addresses[0].apartment}{" "}
+                      {selectedCustomer.addresses[0].city +
+                        " " +
+                        selectedCustomer.addresses[0].state +
+                        " " +
+                        selectedCustomer.addresses[0].postal_code}
+                      <br />
+                      {selectedCustomer.addresses[0].country}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <AddCustomerToOrder
+                    users={users}
+                    open2={open2}
+                    setOpen2={setOpen2}
+                    setSelectedCustomer={handleSetSelectedCustomer}
+                  />
+                </div>
+              )}
             </div>
             <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
               section 2
