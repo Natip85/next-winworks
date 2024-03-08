@@ -2,14 +2,9 @@
 import { FulfillmentStatusLabel, Order, Product, User } from "@prisma/client";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import {
-  ArrowLeft,
-  ChevronsUpDown,
-  Clipboard,
-  PlusCircle,
-  Trash2,
-  X,
-} from "lucide-react";
+import { ArrowLeft, ChevronsUpDown, Clipboard, Trash2, X } from "lucide-react";
+import { FaTruckFast } from "react-icons/fa6";
+import { CiBookmarkCheck } from "react-icons/ci";
 import {
   Command,
   CommandEmpty,
@@ -220,50 +215,63 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
             </DialogContent>
           </Dialog>
           <div className="ml-2">
-            {order && (
-              <div className="flex items-center gap-2">
-                <h2 className="font-bold text-2xl">
-                  {order ? order.id : "Create order"}
-                </h2>
-                <span>
-                  <Badge
-                    variant={
-                      order.paymentStatus === "complete"
-                        ? "success"
-                        : "secondary"
-                    }
-                  >
-                    {order.paymentStatus === "complete" ? "paid" : "pending"}
-                  </Badge>
-                </span>
-                <span>
-                  <Badge
-                    variant={
-                      order.fulfillmentStatus ===
-                      FulfillmentStatusLabel.FULFILLED
-                        ? "secondary"
-                        : "warning"
-                    }
-                  >
-                    {order.fulfillmentStatus}
-                  </Badge>
-                </span>
+            {order ? (
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="font-bold text-2xl">{order.id}</h2>
+                  <span>
+                    <Badge variant={"outline"}>
+                      {order.paymentStatus === "complete" ? "paid" : "pending"}
+                    </Badge>
+                  </span>
+                  <span>
+                    <Badge variant={"outline"}>{order.fulfillmentStatus}</Badge>
+                  </span>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {moment(order?.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
+                </div>
               </div>
+            ) : (
+              <h2 className="font-bold text-2xl">Create order</h2>
             )}
-            <div className="text-sm text-muted-foreground">
-              {moment(order?.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
-            </div>
           </div>
         </div>
         {order ? (
           <div className="md:flex gap-5">
             <div className="md:w-2/3">
               <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
-                sec 1
+                <Badge
+                  variant={
+                    order.fulfillmentStatus === FulfillmentStatusLabel.FULFILLED
+                      ? "success"
+                      : "secondary"
+                  }
+                  className="m-2 py-2 px-3 flex items-center gap-1 w-fit"
+                >
+                  <FaTruckFast className="size-4" /> {order.fulfillmentStatus}
+                </Badge>
+                <div className="border p-3 rounded-md flex flex-col">
+                  <span className="text-muted-foreground">DHL Express</span>
+                  <span className="text-sky-700 underline hover:cursor-pointer">
+                    6899028847
+                  </span>
+                </div>
               </div>
-              <div>
-                <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
-                  sec 2
+
+              <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
+                <Badge
+                  variant={"secondary"}
+                  className="m-2 py-2 px-3 flex items-center gap-1 w-fit"
+                >
+                  <CiBookmarkCheck className="size-4" />
+                  {order.paymentStatus === "complete" ? "paid" : "pending"}
+                </Badge>
+                <div className="border p-3 rounded-md flex flex-col">
+                  <span className="text-muted-foreground">DHL Express</span>
+                  <span className="text-sky-700 underline hover:cursor-pointer">
+                    6899028847
+                  </span>
                 </div>
               </div>
             </div>
