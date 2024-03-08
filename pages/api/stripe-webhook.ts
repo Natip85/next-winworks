@@ -39,11 +39,11 @@ export default async function handler(
   let finalAddress; // Declare finalAddress outside of the switch block
 
   switch (event.type) {
-    case "payment_intent.created":
-      const paymentIntent = event.data.object;
+    // case "payment_intent.created":
+    //   const paymentIntent = event.data.object;
 
-      console.log("Payment intent was created");
-      break;
+    //   console.log("Payment intent was created");
+    //   break;
     case "charge.succeeded":
       const charge: any = event.data.object as Stripe.Charge;
 
@@ -59,7 +59,7 @@ export default async function handler(
           userId: "",
           apartment: "",
         };
-        const orderUpdate = await prismadb.order.update({
+        await prismadb.order.update({
           where: { paymentIntentId: charge.payment_intent },
           data: {
             paymentStatus: "complete",
@@ -67,30 +67,30 @@ export default async function handler(
             shippingAddress: finalAddress,
           },
         });
-        const user = await prismadb.user.findUnique({
-          where: {
-            id: orderUpdate.userId,
-          },
-        });
+        // const user = await prismadb.user.findUnique({
+        //   where: {
+        //     id: orderUpdate.userId,
+        //   },
+        // });
 
-        try {
-          const user = orderUpdate.userId;
+        // try {
+        //   const user = orderUpdate.userId;
 
-          if (user) {
-            const updatedAddresses = [finalAddress];
-            await prismadb.user.update({
-              where: { id: user },
-              data: {
-                addresses: updatedAddresses,
-              },
-            });
-          } else {
-            console.error("Unable to retrieve current user.");
-          }
-        } catch (error) {
-          console.error("Error retrieving current user:", error);
-          return res.status(500).send("Internal Server Error");
-        }
+        //   if (user) {
+        //     const updatedAddresses = [finalAddress];
+        //     await prismadb.user.update({
+        //       where: { id: user },
+        //       data: {
+        //         addresses: updatedAddresses,
+        //       },
+        //     });
+        //   } else {
+        //     console.error("Unable to retrieve current user.");
+        //   }
+        // } catch (error) {
+        //   console.error("Error retrieving current user:", error);
+        //   return res.status(500).send("Internal Server Error");
+        // }
       }
       break;
     default:
