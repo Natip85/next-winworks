@@ -4,7 +4,7 @@ export default async function getOrders() {
   try {
     const orders = await prismadb.order.findMany({
       include: {
-        user: true,
+        user: false,
       },
       orderBy: {
         createdAt: "desc",

@@ -103,7 +103,7 @@ model Order {
   totalDiscounts    Int
   totalPrice        Float
   deliveryStatus    String
-  products CartProductType[]
+  products OrderCartProductType[]
   paymentIntentId   String @unique
   userId            String @db.ObjectId
   user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -165,10 +165,10 @@ type ServerData {
   uploadedBy String    
 }
 
-type CartProductType  {
+type OrderCartProductType  {
   id String
   title String
-  decription String
+  description String
   images Image[]
   options ProductOptions[]
   productCategory String
@@ -176,6 +176,20 @@ type CartProductType  {
   quantity Int
   price Int
   variant Json
+  collections Json[]
+  available Boolean?
+  comparePriceAt Int?
+  createdAt         String?
+  requiresShipping Boolean?
+  sku                   String?
+  status String?
+  taxable Boolean?
+  totalInventory Int?
+  totalVariants Int?
+  weight Int?
+  weightUnit String?
+  variants              Json[]
+  reviews Json[]
 }
 
 enum Role {

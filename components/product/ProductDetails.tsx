@@ -39,7 +39,7 @@ interface Option {
 export type CartProductType = {
   id: string;
   title: string;
-  decription: string;
+  description: string;
   images: prismaImg[];
   options: Option[];
   productCategory: string;
@@ -59,7 +59,7 @@ const ProductDetails = ({ product, variant }: ProductDetailsProps) => {
   const [productImages, setProductImages] = useState(product.images);
   const [cartProduct, setCartProduct] = useState<CartProductType>({
     id: product.id,
-    decription: product.description,
+    description: product.description,
     images: [product.images[0]],
     quantity: 1,
     price: product.price,

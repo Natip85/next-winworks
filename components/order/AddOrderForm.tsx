@@ -1,5 +1,5 @@
 "use client";
-import { Order, Product, User } from "@prisma/client";
+import { FulfillmentStatusLabel, Order, Product, User } from "@prisma/client";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import {
@@ -36,6 +36,7 @@ import { useRouter } from "next/navigation";
 import AddCustomerToOrder from "./AddCustomerToOrder";
 import Link from "next/link";
 import { useToast } from "../ui/use-toast";
+import axios from "axios";
 
 interface AddOrderFormProps {
   order: OrderWithUser | null;
@@ -46,6 +47,9 @@ export type OrderWithUser = Order & {
   user: User;
 };
 
+export type userWithOrders = User & {
+  orders: Order[];
+};
 const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
   const router = useRouter();
   const { toast } = useToast();
@@ -56,8 +60,9 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
   const [productQuantities, setProductQuantities] = useState<{
     [key: string]: number;
   }>({});
-  const [selectedCustomer, setSelectedCustomer] = useState<User>();
+  const [selectedCustomer, setSelectedCustomer] = useState<userWithOrders>();
   console.log("selectedCustomer>>>", selectedCustomer);
+  console.log("selectedProducts>>>", selectedProducts);
 
   const handleCheckboxChange = (productId: string) => {
     const isSelected = selectedProducts.some(
@@ -93,28 +98,50 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
     return acc + prod.price * quantity;
   }, 0);
 
-  const finalData = {
-    products: selectedProducts.map((product) => ({
-      ...product,
-      quantity: productQuantities[product.id] || 1,
-    })),
-    fulfillmentStatus: "Unfullfilled",
-    paymentStatus: "complete",
-    itemCount: selectedProducts.length,
-    shippingAddress: {},
-    shippingPrice: 0,
-    subtotalPrice: total,
-    currency: "usd",
-    taxPrice: 0,
-    totalDiscounts: 0,
-    totalPrice: total,
-    deliveryStatus: "dispatched",
-    paymentIntentId: "123intent",
-    email: "",
-    userId: "",
+  const onSubmit = () => {
+    const finalData = {
+      email: selectedCustomer?.email,
+      fulfillmentStatus: FulfillmentStatusLabel.UNFULFILLED,
+      paymentStatus: "complete",
+      itemCount: selectedProducts.length,
+      shippingAddress: selectedCustomer?.addresses[0],
+      shippingPrice: 0,
+      subtotalPrice: total,
+      currency: "usd",
+      taxPrice: 0,
+      totalDiscounts: 0,
+      totalPrice: total,
+      deliveryStatus: "dispatched",
+      products: selectedProducts.map((product) => ({
+        ...product,
+        quantity: productQuantities[product.id] || 1,
+        variant: {},
+        // collections: [],
+      })),
+      paymentIntentId: "123intent",
+      userId: selectedCustomer?.id,
+    };
+
+    console.log("finalData>>", finalData);
+    axios
+      .post("/api/order", finalData)
+      .then((res) => {
+        toast({
+          variant: "success",
+          description: "Order created",
+        });
+        router.push(`/orders/${res.data.id}`);
+      })
+      .catch(() => {
+        //  setIsLoading(false);
+        toast({
+          variant: "destructive",
+          description: "Oops!something went wrong",
+        });
+      })
+      //  .finally(() => setIsLoading(false));
+      .finally(() => {});
   };
-  console.log("finalData>>", finalData);
-  const onSubmit = () => {};
 
   const handleSetSelectedCustomer = (val: any) => {
     console.log("RECEIVED VALUE>>", val);
@@ -369,7 +396,9 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
               </div>
               {selectedProducts.length > 0 && (
                 <div className="mt-5 flex justify-end">
-                  <Button size={"sm"}>Collect payment</Button>
+                  <Button size={"sm"} onClick={onSubmit}>
+                    Collect payment
+                  </Button>
                 </div>
               )}
             </div>
@@ -400,8 +429,8 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                       </Link>
                     </p>
                     <p className="text-sm">
-                      {selectedCustomer.ordersCount
-                        ? selectedCustomer.ordersCount + " orders"
+                      {selectedCustomer.orders.length
+                        ? selectedCustomer.orders.length + " orders"
                         : "No orders"}
                     </p>
                   </div>
@@ -422,7 +451,9 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                   <div>
                     <h3 className="font-medium mb-2">Shipping address</h3>
                     <p className="text-sm">
-                      {selectedCustomer.addresses[0].fullName}
+                      {selectedCustomer.addresses[0].firstName +
+                        " " +
+                        selectedCustomer.addresses[0].lastName}
                       <br />
                       {selectedCustomer.addresses[0].line1}
                       <br />

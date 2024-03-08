@@ -5,6 +5,7 @@ import Link from "next/link";
 
 const Orders = async () => {
   const orders = (await getOrders()) || [];
+  console.log("ORDERS>>>", orders);
 
   return (
     <div>
