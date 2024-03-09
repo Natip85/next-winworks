@@ -41,25 +41,25 @@ const CheckoutClient = () => {
         }),
       })
         .then((res) => {
-          setLoading(false);
           if (res.status === 401) {
             return router.push("/auth");
           }
           return res.json();
         })
         .then((data) => {
-          setLoading(false);
           setClientSecret(data.paymentIntent.client_secret);
           handleSetPaymentIntent(data.paymentIntent.id);
+          setLoading(false);
         })
         .catch((error) => {
-          setLoading(false);
           setError(true);
-          console.log("Error", error);
+          setLoading(false);
+
           toast({
             variant: "destructive",
             description: "Something went wrong",
           });
+          console.log("Error", error);
         });
     }
   }, [paymentIntent, cartProducts]);
@@ -78,7 +78,7 @@ const CheckoutClient = () => {
 
   return (
     <div>
-      {clientSecret && cartProducts && (
+      {clientSecret && cartProducts && !error && (
         <div className="md:flex md:flex-row flex flex-col-reverse">
           <div className="flex-1 flex md:justify-end p-5">
             <div className="w-full lg:w-2/3">

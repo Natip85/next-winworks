@@ -26,6 +26,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
+  console.log("BODY>>>", body);
 
   const { items, payment_intent_id } = body;
   const total = calculateOrderAmount(items) * 100;
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
     deliveryStatus: "pending",
     paymentIntentId: payment_intent_id,
     products: items,
-    email: "",
+    email: "test",
     fulfillmentStatus: FulfillmentStatusLabel.UNFULFILLED,
     itemCount: items.length,
     shippingPrice: 0,

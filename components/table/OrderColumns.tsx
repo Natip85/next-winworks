@@ -70,7 +70,12 @@ export const columns: ColumnDef<any>[] = [
       const order = row.original;
       const shippingAddress = order.shippingAddress;
 
-      return <span>{shippingAddress?.fullName}</span>;
+      return (
+        <span>
+          {shippingAddress?.fullName ||
+            shippingAddress?.firstName + " " + shippingAddress?.lastName}
+        </span>
+      );
     },
   },
   {
@@ -127,7 +132,6 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "",
     cell: ({ row }) => {
       const order = row.original;
-      console.log("THIS?", order);
 
       return (
         <span>

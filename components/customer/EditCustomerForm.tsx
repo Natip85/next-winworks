@@ -43,7 +43,6 @@ const EditCustomerForm = ({
   const countries = Country.getAllCountries();
   const [selectedCountry, setSelectedCountry] = useState<ICountry>();
   const [availableStates, setAvailableStates] = useState<IState[]>([]);
-  console.log("USER>>", user);
 
   const useDynamicForm = () => {
     const form = useForm<z.infer<typeof createCustomerFormSchema>>({
@@ -75,8 +74,6 @@ const EditCustomerForm = ({
     });
 
     function onSubmit(values: z.infer<typeof createCustomerFormSchema>) {
-      console.log("EDITFORMVALS>>>", values);
-
       setIsLoading(true);
 
       if (user) {
@@ -87,10 +84,7 @@ const EditCustomerForm = ({
               variant: "success",
               description: "Customer updated",
             });
-            console.log("RES<>>>>", res);
-
             setIsLoading(false);
-
             if (handleSetSelectedCustomer) {
               handleSetSelectedCustomer(res.data);
             }

@@ -36,7 +36,7 @@ export default async function handler(
     return res.status(400).send("Webook error" + err);
   }
 
-  let finalAddress; // Declare finalAddress outside of the switch block
+  let finalAddress;
 
   switch (event.type) {
     // case "payment_intent.created":

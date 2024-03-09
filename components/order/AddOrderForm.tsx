@@ -23,14 +23,10 @@ import { useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 import Image from "next/image";
 import { Input } from "../ui/input";
-import { Separator } from "../ui/separator";
 import { formatPrice } from "@/lib/utils";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -43,6 +39,7 @@ import axios from "axios";
 import { Badge } from "../ui/badge";
 import moment from "moment";
 import EditCustomerForm from "../customer/EditCustomerForm";
+import Modal from "../Modal";
 
 interface AddOrderFormProps {
   order: OrderWithUser | null;
@@ -59,18 +56,17 @@ export type userWithOrders = User & {
 const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
   const router = useRouter();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
-  const [leave, setLeave] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [productQuantities, setProductQuantities] = useState<{
     [key: string]: number;
   }>({});
   const [selectedCustomer, setSelectedCustomer] = useState<userWithOrders>();
-  console.log("selectedCustomer>>>", selectedCustomer);
-  console.log("selectedProducts>>>", selectedProducts);
-  console.log("ORDER>>>", order);
+  console.log("Order>>>", order);
+  console.log("Users>>>", users);
 
   const handleCheckboxChange = (productId: string) => {
     const isSelected = selectedProducts.some(
@@ -108,6 +104,7 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
   const finalTotal = total * 100;
 
   const onSubmit = () => {
+    setIsLoading(true);
     const finalData = {
       email: selectedCustomer?.email,
       fulfillmentStatus: FulfillmentStatusLabel.UNFULFILLED,
@@ -125,13 +122,11 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
         ...product,
         quantity: productQuantities[product.id] || 1,
         variant: {},
-        // collections: [],
       })),
       paymentIntentId: "123intent",
       userId: selectedCustomer?.id,
     };
 
-    console.log("finalData>>", finalData);
     axios
       .post("/api/order", finalData)
       .then((res) => {
@@ -142,18 +137,16 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
         router.push(`/orders/${res.data.id}`);
       })
       .catch(() => {
-        //  setIsLoading(false);
+        setIsLoading(false);
         toast({
           variant: "destructive",
           description: "Oops!something went wrong",
         });
-      })
-      //  .finally(() => setIsLoading(false));
-      .finally(() => {});
+      });
+    // .finally(() => setIsLoading(false));
   };
 
   const handleSetSelectedCustomer = (val: any) => {
-    console.log("RECEIVED VALUE>>", val);
     setSelectedCustomer(val);
   };
 
@@ -185,55 +178,15 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
     <div>
       <div className="flex flex-col max-w-[950px] gap-3 mx-auto">
         <div className="flex items-center mb-5">
-          <Dialog open={leave} onOpenChange={setLeave}>
-            <Button
-              type="button"
-              variant={"ghost"}
-              onClick={() => {}}
-              className="hover:bg-gray-200 p-0 px-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-
-            <DialogContent className="max-w-[900px] w-[90%]">
-              <DialogHeader>
-                <DialogTitle className="my-3">
-                  Leave page with unsaved changes?
-                </DialogTitle>
-                <Separator />
-                <DialogDescription className="py-5 text-black">
-                  Leaving this page will delete all unsaved changes.
-                </DialogDescription>
-                <Separator />
-              </DialogHeader>
-
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button
-                    type="button"
-                    size={"sm"}
-                    variant={"outline"}
-                    className="h-[35px]"
-                    onClick={() => setLeave(!leave)}
-                  >
-                    Stay
-                  </Button>
-                </DialogClose>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size={"sm"}
-                  onClick={() => {
-                    setLeave(!leave);
-                    router.push("/products");
-                  }}
-                  className="h-[35px]"
-                >
-                  Leave page
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Modal
+            icon={<ArrowLeft className="h-4 w-4" />}
+            onConfirm={() => router.push("/orders")}
+            cancelTitle="Cancel"
+            confirmTitle="Leave"
+            title="Leave page?"
+            description={`Are you sure you want to leave this page? All unsaved data will be lost.`}
+            btnClasses="rounded-md hover:bg-gray-300 p-2"
+          />
           <div className="ml-2">
             {order ? (
               <div>
@@ -399,7 +352,7 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                     onClick={handleCopyEmail}
                   >
                     <span className="w-[90%] break-all text-sky-600 text-sm font-medium hover:underline">
-                      {order.email}sss
+                      {order.email === "" ? "Email not available" : order.email}
                     </span>
                     <span>
                       <Clipboard className="size-4 " />
@@ -424,7 +377,6 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                       order.shippingAddress?.postal_code}
                     <br />
                     {order.shippingAddress?.country}
-                    addres here
                   </p>
                 </div>
               </div>
@@ -607,8 +559,8 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                 </div>
                 {selectedProducts.length > 0 && (
                   <div className="mt-5 flex justify-end">
-                    <Button size={"sm"} onClick={onSubmit}>
-                      Collect payment
+                    <Button disabled={isLoading} size={"sm"} onClick={onSubmit}>
+                      {isLoading ? "Creating order" : "Collect payment"}
                     </Button>
                   </div>
                 )}
@@ -688,7 +640,7 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                           {selectedCustomer.email}
                         </span>
                         <span>
-                          <Clipboard className="size-4 " />
+                          <Clipboard className="size-4" />
                         </span>
                       </div>
                     </div>
@@ -723,9 +675,9 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                   </div>
                 )}
               </div>
-              <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
+              {/* <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
                 section 2
-              </div>
+              </div> */}
             </div>
           </div>
         )}

@@ -28,6 +28,7 @@ const CheckoutForm = ({
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
   const formattedPrice = formatPrice(cartTotalAmount);
 
   useEffect(() => {
@@ -69,7 +70,11 @@ const CheckoutForm = ({
     <form onSubmit={handleSubmit} id="payment-form">
       <div>
         <h3 className="text-2xl font-semibold mb-3">Contact</h3>
-        <Input placeholder="Email" />
+        <Input
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
       </div>
       <h3 className="text-2xl font-semibold my-3">Delivery</h3>
       <AddressElement
