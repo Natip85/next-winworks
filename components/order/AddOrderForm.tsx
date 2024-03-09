@@ -65,8 +65,6 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
     [key: string]: number;
   }>({});
   const [selectedCustomer, setSelectedCustomer] = useState<userWithOrders>();
-  console.log("Order>>>", order);
-  console.log("Users>>>", users);
 
   const handleCheckboxChange = (productId: string) => {
     const isSelected = selectedProducts.some(
@@ -146,6 +144,25 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
     // .finally(() => setIsLoading(false));
   };
 
+  const handleFulfillOrder = () => {
+    if (!order) return;
+    axios
+      .patch("/api/order", { id: order.id })
+      .then((res) => {
+        toast({
+          variant: "success",
+          description: "Order fulfilled",
+        });
+        router.push(`/orders/${res.data.id}`);
+      })
+      .catch(() => {
+        setIsLoading(false);
+        toast({
+          variant: "destructive",
+          description: "Oops!something went wrong",
+        });
+      });
+  };
   const handleSetSelectedCustomer = (val: any) => {
     setSelectedCustomer(val);
   };
@@ -269,6 +286,18 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
                     </div>
                   ))}
                 </div>
+                {order.fulfillmentStatus ===
+                  FulfillmentStatusLabel.UNFULFILLED && (
+                  <div className="flex items-center justify-end">
+                    <Button
+                      variant={"outline"}
+                      className="mt-3"
+                      onClick={handleFulfillOrder}
+                    >
+                      Fulfill items
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <div className="w-full rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
