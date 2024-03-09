@@ -50,7 +50,16 @@ const CheckoutForm = ({
     stripe
       .confirmPayment({
         elements,
+
         redirect: "if_required",
+        confirmParams: {
+          return_url: "https://example.com/",
+          payment_method_data: {
+            billing_details: {
+              email: email,
+            },
+          },
+        },
       })
       .then((result) => {
         if (!result.error) {

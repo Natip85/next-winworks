@@ -46,6 +46,7 @@ export default async function handler(
     //   break;
     case "charge.succeeded":
       const charge: any = event.data.object as Stripe.Charge;
+      console.log("CHARGE>>>", charge);
 
       if (typeof charge.payment_intent === "string") {
         finalAddress = {
@@ -63,7 +64,7 @@ export default async function handler(
           where: { paymentIntentId: charge.payment_intent },
           data: {
             paymentStatus: "complete",
-            email: "",
+            email: charge.billing_details.email,
             shippingAddress: finalAddress,
           },
         });

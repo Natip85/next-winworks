@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     deliveryStatus: "pending",
     paymentIntentId: payment_intent_id,
     products: items,
-    email: "test",
+    email: "",
     fulfillmentStatus: FulfillmentStatusLabel.UNFULFILLED,
     itemCount: items.length,
     shippingPrice: 0,
