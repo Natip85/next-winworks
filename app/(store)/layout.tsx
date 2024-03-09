@@ -23,7 +23,7 @@ export default async function RootLayout({
       <body suppressHydrationWarning>
         <AuthContext>
           <CartProvider>
-            {/* <Toaster /> */}
+            <Toaster />
             <div className="flex flex-col min-h-screen">
               <div className="py-2 transition-colors bg-green-100 text-green-700 relative z-20 text-center">
                 <div className="gap-4 justify-center lg:justify-center items-center lg:items-center flex flex-wrap">

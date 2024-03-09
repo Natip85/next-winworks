@@ -46,6 +46,13 @@ const CheckoutForm = ({
     if (!stripe || !elements) {
       return;
     }
+    if (!email) {
+      toast({
+        variant: "destructive",
+        description: "Email required",
+      });
+      return;
+    }
     setIsLoading(true);
     stripe
       .confirmPayment({
