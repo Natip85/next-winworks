@@ -30,7 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Search } from "lucide-react";
-import { downloadToExcel } from "@/app/api/product/xlsx";
+import { downloadToExcel } from "@/app/api/register/xlsx";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -85,10 +85,10 @@ function UserTable<TData, TValue>({
                   id="user-table"
                   placeholder="Filter Users"
                   value={
-                    (table.getColumn("title")?.getFilterValue() as string) || ""
+                    (table.getColumn("email")?.getFilterValue() as string) || ""
                   }
                   onChange={(e) => {
-                    table.getColumn("title")?.setFilterValue(e.target.value);
+                    table.getColumn("email")?.setFilterValue(e.target.value);
                   }}
                   className="mb-3 h-[30px]"
                 />
