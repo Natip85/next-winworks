@@ -11,10 +11,18 @@ export function downloadToExcel(data: any) {
         { label: "Orders", value: "orders" },
         { label: "Amount spent", value: "totalSpent" },
       ],
-      content: data.map((customer: any) => ({
-        ...customer,
-        imageUrls: customer.images.map((img: any) => img.url).join(", "), // Concatenate image URLs into a single string
-      })),
+      content: data.map(
+        (customer: any) => (
+          console.log("CUSTOMER>>>", customer),
+          {
+            ...customer,
+            orders: customer.orders.length,
+            totalSpent: customer.orders.map((order: any) =>
+              console.log("THIS?", order.totalPrice / 100)
+            ),
+          }
+        )
+      ),
     },
   ];
 
