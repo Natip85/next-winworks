@@ -41,17 +41,17 @@ const Topbar = ({ user }: TopbarProps) => {
         </nav>
         <div className="flex justify-between items-center gap-4">
           {user ? (
-            <>
-              <User />
-            </>
+            <div>
+              <Link href={"/dashboard"} className="p-0">
+                <User className="hover:text-teal-700" />
+              </Link>
+            </div>
           ) : (
-            <>
-              <div>
-                <Link href={"/auth"} className="p-0">
-                  <User />
-                </Link>
-              </div>
-            </>
+            <div>
+              <Link href={"/auth"} className="p-0">
+                <User />
+              </Link>
+            </div>
           )}
 
           <div>

@@ -10,8 +10,12 @@ import {
   AiFillAppstore,
   AiFillShop,
 } from "react-icons/ai";
-import { FaUser } from "react-icons/fa";
+import { BsArchive } from "react-icons/bs";
+import { FaArchive, FaFileArchive, FaUser, FaUserCircle } from "react-icons/fa";
+import { FaRegCircleUser } from "react-icons/fa6";
 import { GoGraph } from "react-icons/go";
+import { IoLocationOutline } from "react-icons/io5";
+import { IoLocation } from "react-icons/io5";
 
 export const sidebarLinks = [
   {
@@ -49,5 +53,25 @@ export const sidebarLinks = [
     iconActive: <AiFillShop size={20} />,
     route: "/",
     label: "Live Store",
+  },
+];
+export const profileMenuLinks = [
+  {
+    icon: <FaUserCircle size={20} />,
+    iconActive: <FaRegCircleUser size={20} />,
+    route: "/dashboard/details",
+    label: "Account Details",
+  },
+  {
+    icon: <FaArchive size={20} />,
+    iconActive: <BsArchive size={20} />,
+    route: "/dashboard/history",
+    label: "Order History",
+  },
+  {
+    icon: <IoLocation size={20} />,
+    iconActive: <IoLocationOutline size={20} />,
+    route: "/dashboard/addresses",
+    label: "View Addresses",
   },
 ];
