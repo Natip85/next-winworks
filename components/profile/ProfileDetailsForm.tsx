@@ -75,7 +75,7 @@ const ProfileDetailsForm = ({ user }: ProfileDetailsFormProps) => {
       <div className="flex justify-between items-center">
         <div>
           <h3 className="font-semibold mb-1 md:mb-3">
-            {user?.firstName + " " + user.lastName}
+            {user?.name || user?.firstName + " " + user?.lastName}
           </h3>
           <p className="text-sm font-light text-muted-foreground">
             {user.email}
