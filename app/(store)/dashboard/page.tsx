@@ -1,5 +1,6 @@
 import getCurrentUser from "@/actions/getCurrentUser";
-import ProfileMenu from "@/components/ProfileMenu";
+import ProfileMenu from "@/components/profile/ProfileMenu";
+
 import { UserCircle2 } from "lucide-react";
 
 const Dashboard = async () => {

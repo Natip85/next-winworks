@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import {
   Archive,
   ChevronRight,
@@ -8,10 +8,10 @@ import {
   Power,
   UserCircle2,
 } from "lucide-react";
-import { profileMenuLinks } from "@/constants/sidebarLinks";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
+import { profileMenuLinks } from "@/constants/sidebarLinks";
 
 const ProfileMenu = () => {
   const pathname = usePathname();
