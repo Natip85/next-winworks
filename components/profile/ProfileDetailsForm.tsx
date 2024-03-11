@@ -1,6 +1,6 @@
 "use client";
 import * as z from "zod";
-import { Edit3Icon } from "lucide-react";
+import { Edit3Icon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -49,7 +49,7 @@ const ProfileDetailsForm = ({ user }: ProfileDetailsFormProps) => {
           .then(() => {
             toast({
               variant: "success",
-              description: "Customer updated",
+              description: "Your account details have been updated",
             });
             setIsLoading(false);
             setOpenForm(false);
@@ -163,10 +163,17 @@ const ProfileDetailsForm = ({ user }: ProfileDetailsFormProps) => {
                 <Button
                   onClick={form.handleSubmit(onSubmit)}
                   type="submit"
+                  disabled={isLoading}
                   variant={"outline"}
                   className="bg-teal-700 text-white hover:bg-teal-900 hover:text-white"
                 >
-                  Save settings
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2Icon /> Processing...
+                    </div>
+                  ) : (
+                    "Save settings"
+                  )}
                 </Button>
               </div>
             </form>

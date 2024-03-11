@@ -6,7 +6,7 @@ import { UserCircle2 } from "lucide-react";
 const Details = async () => {
   const user = await getCurrentUser();
   return (
-    <div>
+    <div className="max-w-[1200px] mx-auto">
       <div className="flex items-center justify-center gap-4 mb-6 pt-5">
         <span className="bg-teal-50 flex h-12 w-12 items-center justify-center rounded-full">
           <div>
