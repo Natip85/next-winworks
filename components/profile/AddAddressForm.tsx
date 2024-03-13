@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Button } from "../ui/button";
 interface AddAddressFormProps {
   user: any;
 }
@@ -38,11 +39,11 @@ const AddAddressForm = ({ user }: AddAddressFormProps) => {
     const form = useForm<z.infer<typeof createCustomerFormSchema>>({
       resolver: zodResolver(createCustomerFormSchema),
       defaultValues: {
-        firstName: "",
-        name: "",
-        lastName: "",
-        email: "",
-        phone: "",
+        firstName: user.firstName,
+        name: user.name,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
         addresses: [
           {
             line1: "",
@@ -65,21 +66,18 @@ const AddAddressForm = ({ user }: AddAddressFormProps) => {
     });
 
     function onSubmit(values: z.infer<typeof createCustomerFormSchema>) {
-      setIsLoading(true);
-
+      console.log("VALUS>>>", values);
+      values.addresses?.push(user.addresses[0]);
       if (user) {
-        // UPDATE
-
         axios
           .patch(`/api/register/${user.id}`, values)
-          .then((res) => {
+          .then(() => {
             toast({
               variant: "success",
-              description: "Customer updated",
+              description: "Your account details have been updated",
             });
-
             setIsLoading(false);
-            router.push(`/customers/${res.data.id}`);
+            form.reset();
             router.refresh();
           })
           .catch((err) => {
@@ -110,6 +108,7 @@ const AddAddressForm = ({ user }: AddAddressFormProps) => {
       setAvailableStates([]);
     }
   }, [selectedCountry]);
+
   return (
     <Form {...form}>
       <form className="my-10">
@@ -305,6 +304,9 @@ const AddAddressForm = ({ user }: AddAddressFormProps) => {
             </div>
           </div>
         </div>
+        <Button type="button" onClick={form.handleSubmit(onSubmit)}>
+          click
+        </Button>
       </form>
     </Form>
   );

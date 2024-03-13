@@ -155,7 +155,7 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
               <div className="flex justify-between">
                 <div>
                   <h3 className="font-semibold mb-1 md:mb-3">
-                    {address.firstName + " " + address.lastName}
+                    {address?.firstName + " " + address?.lastName}
                   </h3>
                   <p className="text-sm font-light text-muted-foreground">
                     {address.line1 +
