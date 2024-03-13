@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Country, ICountry, IState, State } from "country-state-city";
+import AddAddressForm from "./AddAddressForm";
 
 interface ProfileAddressesFormProps {
   user: any;
@@ -41,7 +42,7 @@ interface ProfileAddressesFormProps {
 const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
   const router = useRouter();
   const { toast } = useToast();
-  const [openForm, setOpenForm] = useState(false);
+  const [openAddForm, setOpenAddForm] = useState(false);
   const [openEditForm, setOpenEditForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const countries = Country.getAllCountries();
@@ -51,10 +52,10 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
     const form = useForm<z.infer<typeof createCustomerFormSchema>>({
       resolver: zodResolver(createCustomerFormSchema),
       defaultValues: user || {
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
         addresses: [
           {
             line1: "",
@@ -70,7 +71,7 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
             fullName: "",
             phone: "",
             street: "",
-            userId: "",
+            userId: user.id,
           },
         ],
       },
@@ -89,7 +90,7 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
               description: "Your account details have been updated",
             });
             setIsLoading(false);
-            setOpenForm(false);
+            setOpenEditForm(false);
             form.reset();
             router.refresh();
           })
@@ -121,12 +122,13 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
     const statesForCountry = State.getStatesOfCountry(selectedCountry?.isoCode);
     setAvailableStates(statesForCountry);
   }, [selectedCountry]);
+
   return (
     <div>
       <div className="flex justify-between items-center mb-10">
         <h1 className="font-semibold text-2xl">My addresses</h1>
         <Button
-          onClick={() => setOpenForm(!openForm)}
+          onClick={() => setOpenAddForm(!openAddForm)}
           variant={"outline"}
           type="button"
           size={"sm"}
@@ -136,7 +138,7 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
           Add New Address
         </Button>
       </div>
-
+      {openAddForm && <AddAddressForm user={user} />}
       {user.addresses[0]?.line1 === "" ? (
         <div className="flex items-center justify-center gap-4 mb-6 pt-5 mt-10">
           <span className="bg-gray-100 flex size-20 items-center justify-center rounded-full">
@@ -422,7 +424,7 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
                         </div>
                         <div className="flex gap-3 my-5">
                           <Button
-                            onClick={() => setOpenForm(false)}
+                            onClick={() => setOpenEditForm(false)}
                             type="button"
                             variant={"outline"}
                           >

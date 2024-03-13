@@ -20,7 +20,7 @@ const HistoryClient = ({ user }: HistoryClientProps) => {
           <h2 className="text-xl">You haven&apos;t placed any orders yet.</h2>
         </div>
       )}
-      {user && (
+      {user.orders.length > 0 && (
         <div className="mt-6 overflow-scroll lg:mt-4">
           <div className="flex min-w-full border-b py-3 font-bold">
             <div className="flex-1 px-4 w-[150px] min-w-[150px]">Order</div>

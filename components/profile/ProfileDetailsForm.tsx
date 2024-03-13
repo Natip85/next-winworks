@@ -28,6 +28,8 @@ const ProfileDetailsForm = ({ user }: ProfileDetailsFormProps) => {
   const { toast } = useToast();
   const [openForm, setOpenForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  console.log("USERDETAILS>>>", user);
+
   const useDynamicForm = () => {
     const form = useForm<z.infer<typeof createCustomerFormSchema>>({
       resolver: zodResolver(createCustomerFormSchema),
@@ -36,12 +38,30 @@ const ProfileDetailsForm = ({ user }: ProfileDetailsFormProps) => {
         lastName: "",
         email: "",
         phone: "",
+        addresses: [
+          {
+            line1: "",
+            line2: "",
+            city: "",
+            country: "",
+            countryCode: "",
+            apartment: "",
+            postal_code: "",
+            state: "",
+            firstName: "",
+            lastName: "",
+            fullName: "",
+            phone: "",
+            street: "",
+            userId: "",
+          },
+        ],
       },
     });
 
     function onSubmit(values: z.infer<typeof createCustomerFormSchema>) {
+      console.log("SUBMITEDDETAILS>>>", values);
       setIsLoading(true);
-      console.log("SUBMITED");
 
       if (user) {
         axios

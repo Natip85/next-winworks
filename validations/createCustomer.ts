@@ -15,7 +15,7 @@ export const createCustomerFormSchema = z.object({
       message: "Invalid email address",
     })
     .optional(),
-  phone: z.string().optional(),
+  phone: z.string(),
   addresses: z
     .array(
       z.object({

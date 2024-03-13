@@ -110,11 +110,9 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
 
       if (user) {
         // UPDATE
-        const finalData = {
-          ...values,
-        };
+
         axios
-          .patch(`/api/register/${user.id}`, finalData)
+          .patch(`/api/register/${user.id}`, values)
           .then((res) => {
             toast({
               variant: "success",
