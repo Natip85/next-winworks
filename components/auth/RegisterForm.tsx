@@ -38,6 +38,7 @@ const RegisterForm = () => {
     defaultValues: {
       name: "",
       email: "",
+      lastName: "",
       password: "",
     },
   });

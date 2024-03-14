@@ -59,7 +59,7 @@ const AddAddressForm = ({ user }: AddAddressFormProps) => {
             fullName: "",
             phone: "",
             street: "",
-            userId: "",
+            userId: user.id,
           },
         ],
       },
@@ -67,7 +67,8 @@ const AddAddressForm = ({ user }: AddAddressFormProps) => {
 
     function onSubmit(values: z.infer<typeof createCustomerFormSchema>) {
       console.log("VALUS>>>", values);
-      values.addresses?.push(user.addresses[0]);
+      if (!values.addresses) return;
+      values.addresses = [...user.addresses, values.addresses[0]];
       if (user) {
         axios
           .patch(`/api/register/${user.id}`, values)
