@@ -54,7 +54,7 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
     const form = useForm<z.infer<typeof createCustomerFormSchema>>({
       resolver: zodResolver(createCustomerFormSchema),
       defaultValues: user || {
-        firstName: user.firstName,
+        firstName: user?.firstName,
         lastName: user.lastName,
         email: user.email,
         phone: user.phone,
@@ -163,7 +163,7 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
             <div className="flex items-center justify-between mb-10">
               <div className="flex-1">
                 <p className="font-semibold mb-2">
-                  {item.firstName + " " + item.lastName}
+                  {item?.firstName + " " + item?.lastName}
                 </p>
                 <p className="font-thin text-sm">
                   {item.line1 +
