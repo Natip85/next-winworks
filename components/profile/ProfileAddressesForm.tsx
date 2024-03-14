@@ -138,7 +138,13 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
           Add New Address
         </Button>
       </div>
-      {openAddForm && <>hgtfghhgtf</>}
+      {openAddForm && (
+        <AddAddressForm
+          user={user}
+          handleOpen={() => setOpenAddForm(!openAddForm)}
+        />
+      )}
+
       {/* {user.addresses[0]?.line1 === "" ? (
         <div className="flex items-center justify-center gap-4 mb-6 pt-5 mt-10">
           <span className="bg-gray-100 flex size-20 items-center justify-center rounded-full">
@@ -149,6 +155,7 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
           <h2 className="text-xl">You haven&apos;t added any addresses yet.</h2>
         </div>
       ) : ( */}
+
       <div>
         {fields.map((item, index) => (
           <div key={item.id} className="mb-10">

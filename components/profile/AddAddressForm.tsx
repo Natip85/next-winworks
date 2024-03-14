@@ -25,16 +25,20 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Button } from "../ui/button";
+import { Edit3Icon, Trash2Icon } from "lucide-react";
+import { PhoneInput } from "../ui/phone-input";
 interface AddAddressFormProps {
   user: any;
+  handleOpen: () => void;
 }
-const AddAddressForm = ({ user }: AddAddressFormProps) => {
+const AddAddressForm = ({ user, handleOpen }: AddAddressFormProps) => {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const countries = Country.getAllCountries();
   const [selectedCountry, setSelectedCountry] = useState<ICountry>();
   const [availableStates, setAvailableStates] = useState<IState[]>([]);
+
   const useDynamicForm = () => {
     const form = useForm<z.infer<typeof createCustomerFormSchema>>({
       resolver: zodResolver(createCustomerFormSchema),
@@ -79,6 +83,7 @@ const AddAddressForm = ({ user }: AddAddressFormProps) => {
             });
             setIsLoading(false);
             form.reset();
+            router.push("/dashboard");
             router.refresh();
           })
           .catch((err) => {
@@ -111,205 +116,225 @@ const AddAddressForm = ({ user }: AddAddressFormProps) => {
   }, [selectedCountry]);
 
   return (
-    <Form {...form}>
-      <form className="my-10">
-        <div className="bg-white">
-          <div className="flex-1 bg-white">
-            <div>
-              {fields.map(({ id }, index) => (
-                <div key={id}>
-                  <div className="md:flex justify-between gap-2">
-                    <FormField
-                      control={form.control}
-                      name={`addresses.${index}.firstName`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1 ">
-                          <FormLabel className="text-xs">First name</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`addresses.${index}.lastName`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel className="text-xs">Last name</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <FormField
-                      control={form.control}
-                      name={`addresses.${index}.line1`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1 ">
-                          <FormLabel className="text-xs">Address</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <FormField
-                      control={form.control}
-                      name={`addresses.${index}.apartment`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1 ">
-                          <FormLabel className="text-xs">
-                            Apartment, suite, etc.
-                          </FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+    <div>
+      {fields.map((item, index) => (
+        <div key={item.id} className="mb-10">
+          <Form key={item.id} {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <h3 className="font-bold text-xl mt-10 mb-5">Contact</h3>
 
-                  <div>
-                    <FormField
-                      control={form.control}
-                      name={`addresses.${index}.city`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1 ">
-                          <FormLabel className="text-xs">City</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="md:flex justify-between gap-2">
-                    <FormField
-                      control={form.control}
-                      name={`addresses.${index}.countryCode`}
-                      render={({ field }) => (
-                        <FormItem className="hidden">
-                          <Input type="hidden" {...field} />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`addresses.${index}.country`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel className="text-xs">
-                            Country/region
-                          </FormLabel>
-                          <Select
-                            onValueChange={(value) => {
-                              // Get the country code based on the selected country name
-                              const theSelectedCountry = countries.find(
-                                (country) => country.name === value
-                              );
-                              if (theSelectedCountry) {
-                                form.setValue(
-                                  `addresses.${index}.countryCode`,
-                                  theSelectedCountry.isoCode
-                                );
-                                setSelectedCountry(theSelectedCountry);
-                                setAvailableStates([]);
-                              }
-
-                              field.onChange(value);
-                            }}
-                            value={field.value}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger className="bg-background">
-                              <SelectValue
-                                defaultValue={field.value}
-                                placeholder="Select a country"
-                              />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {countries.map((country) => (
-                                <SelectItem
-                                  key={country.name}
-                                  value={country.name}
-                                >
-                                  {country.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name={`addresses.${index}.state`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel className="text-xs">State</FormLabel>
-                          <Select
-                            value={field.value}
-                            defaultValue={field.value}
-                            onValueChange={(selectedState) => {
-                              field.onChange(selectedState);
-                            }}
-                          >
-                            <SelectTrigger className="bg-background">
-                              <SelectValue
-                                defaultValue={field.value}
-                                placeholder="Select a state"
-                              />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {availableStates.map((state) => (
-                                <SelectItem
-                                  key={state.isoCode}
-                                  value={state.name}
-                                >
-                                  {state.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`addresses.${index}.postal_code`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1 ">
-                          <FormLabel className="text-xs">Zip code</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+              <div className="md:flex justify-between gap-2 mb-5">
+                <div className="flex-1">
+                  <FormLabel className="text-left">Email</FormLabel>
+                  <Input value={user?.email} disabled className="mt-2" />
                 </div>
-              ))}
-            </div>
-          </div>
+
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel className="text-left">Phone Number</FormLabel>
+                      <FormControl className="w-full">
+                        <PhoneInput {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <h3 className="font-bold text-xl mb-3">Shipping</h3>
+              <div className="flex items-center gap-2">
+                <FormField
+                  control={form.control}
+                  name={`addresses.${index}.firstName`}
+                  render={({ field }) => (
+                    <FormItem className="flex-1 ">
+                      <FormLabel className="text-xs">First name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`addresses.${index}.lastName`}
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel className="text-xs">Last name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <FormField
+                  control={form.control}
+                  name={`addresses.${index}.line1`}
+                  render={({ field }) => (
+                    <FormItem className="flex-1 ">
+                      <FormLabel className="text-xs">Address</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`addresses.${index}.apartment`}
+                  render={({ field }) => (
+                    <FormItem className="flex-1 ">
+                      <FormLabel className="text-xs">
+                        Apartment, suite, etc.
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name={`addresses.${index}.city`}
+                render={({ field }) => (
+                  <FormItem className="flex-1 ">
+                    <FormLabel className="text-xs">City</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex items-center gap-2">
+                <FormField
+                  control={form.control}
+                  name={`addresses.${index}.countryCode`}
+                  render={({ field }) => (
+                    <FormItem className="hidden">
+                      <Input type="hidden" {...field} />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`addresses.${index}.country`}
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel className="text-xs">Country/region</FormLabel>
+                      <Select
+                        onValueChange={(value) => {
+                          // Get the country code based on the selected country name
+                          const theSelectedCountry = countries.find(
+                            (country) => country.name === value
+                          );
+                          if (theSelectedCountry) {
+                            form.setValue(
+                              `addresses.${index}.countryCode`,
+                              theSelectedCountry.isoCode
+                            );
+                            setSelectedCountry(theSelectedCountry);
+                            setAvailableStates([]);
+                          }
+
+                          field.onChange(value);
+                        }}
+                        value={field.value}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="bg-background">
+                          <SelectValue
+                            defaultValue={field.value}
+                            placeholder="Select a country"
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countries.map((country) => (
+                            <SelectItem key={country.name} value={country.name}>
+                              {country.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`addresses.${index}.state`}
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel className="text-xs">State</FormLabel>
+                      <Select
+                        value={field.value}
+                        defaultValue={field.value}
+                        onValueChange={(selectedState) => {
+                          field.onChange(selectedState);
+                        }}
+                      >
+                        <SelectTrigger className="bg-background">
+                          <SelectValue
+                            defaultValue={field.value}
+                            placeholder="Select a state"
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableStates.map((state) => (
+                            <SelectItem key={state.isoCode} value={state.name}>
+                              {state.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`addresses.${index}.postal_code`}
+                  render={({ field }) => (
+                    <FormItem className="flex-1 ">
+                      <FormLabel className="text-xs">Zip code</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex gap-3 my-5">
+                <Button
+                  type="button"
+                  onClick={() => handleOpen()}
+                  variant={"outline"}
+                  className="text-teal-700 border-teal-700"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  // onClick={() => toggleEditForm(index)}
+                  className="bg-teal-700 text-white hover:bg-teal-900 hover:text-white"
+                >
+                  Update address
+                </Button>
+              </div>
+            </form>
+          </Form>
         </div>
-        <Button type="button" onClick={form.handleSubmit(onSubmit)}>
-          click
-        </Button>
-      </form>
-    </Form>
+      ))}
+    </div>
   );
 };
 
