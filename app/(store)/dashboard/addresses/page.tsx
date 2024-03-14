@@ -15,7 +15,7 @@ const Addresses = async () => {
         </span>
         <h2 className="text-xl md:text-4xl font-semibold">My account</h2>
       </div>
-      <div className="mt-4 flex flex-col-reverse px-4 pb-20 lg:mt-8 lg:flex-row xl:pb-80">
+      <div className="mt-4 flex flex-col px-4 pb-20 lg:mt-8 lg:flex-row xl:pb-80">
         <ProfileMenu />
         <div className="w-full lg:mt-3 lg:box-border lg:w-[calc(100%-300px)] lg:pl-12 mt-7 md:mt-2">
           <ProfileAddressesForm user={user} />
