@@ -1,15 +1,7 @@
 "use client";
 import * as z from "zod";
-import {
-  Edit3Icon,
-  Loader2Icon,
-  MessageSquareWarning,
-  Plus,
-  Trash2,
-  Trash2Icon,
-} from "lucide-react";
+import { Edit3Icon, Plus, Trash2Icon } from "lucide-react";
 import { Button } from "../ui/button";
-import { Addresses } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
@@ -56,8 +48,8 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
       defaultValues: user || {
         firstName: user?.firstName,
         lastName: user?.lastName,
-        email: user.email,
-        phone: user.phone,
+        email: user?.email,
+        phone: user?.phone,
         addresses: [],
       },
     });
