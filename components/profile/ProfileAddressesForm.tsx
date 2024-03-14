@@ -55,7 +55,7 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
       resolver: zodResolver(createCustomerFormSchema),
       defaultValues: user || {
         firstName: user?.firstName,
-        lastName: user.lastName,
+        lastName: user?.lastName,
         email: user.email,
         phone: user.phone,
         addresses: [],
