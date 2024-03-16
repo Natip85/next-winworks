@@ -5,8 +5,10 @@ import AuthContext from "@/providers/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
 import Sidebar from "@/components/nav/Sidebar";
 import getCurrentUser from "@/actions/getCurrentUser";
-import MainNavbar from "@/components/nav/AdminNavbar";
+import AdminNavbar from "@/components/nav/AdminNavbar";
 import Bottombar from "@/components/nav/Bottombar";
+import getProducts from "@/actions/getProducts";
+import getOrders from "@/actions/getOrders";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,12 +24,18 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const currentUser = await getCurrentUser();
+  const products = await getProducts();
+  const orders = await getOrders();
   return (
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning>
         <AuthContext>
           <Toaster />
-          <MainNavbar currentUser={currentUser} />
+          <AdminNavbar
+            currentUser={currentUser}
+            products={products}
+            orders={orders}
+          />
           <main className="flex flex-row">
             <Sidebar />
             <section className="flex min-h-screen flex-1 flex-col items-center px-1 pb-10 pt-28 max-md:pb-32 sm:px-10 bg-[#F1F1F1]">
