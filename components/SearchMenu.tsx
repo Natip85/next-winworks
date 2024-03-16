@@ -8,8 +8,9 @@ import { useState } from "react";
 interface SearchMenuProps {
   products: Product[];
   orders: Order[];
+  closeDropdown: () => void;
 }
-const SearchMenu = ({ products, orders }: SearchMenuProps) => {
+const SearchMenu = ({ products, orders, closeDropdown }: SearchMenuProps) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredOrders = orders.filter((order) =>
@@ -21,7 +22,9 @@ const SearchMenu = ({ products, orders }: SearchMenuProps) => {
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    const trimmedSearchTerm = e.target.value.trim();
+
+    setSearchTerm(trimmedSearchTerm);
   };
   return (
     <div>
@@ -48,24 +51,47 @@ const SearchMenu = ({ products, orders }: SearchMenuProps) => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="order">
-          <div className="flex flex-col gap-2">
-            {filteredOrders.map((order) => (
-              <Link href={`/orders/${order.id}`} key={order.id}>
-                <span>{order.id}</span>
-              </Link>
-            ))}
+          <div className="flex flex-col gap-2 p-3">
+            {searchTerm === "" ? (
+              <p className="text-center text-2xl">Search anything</p>
+            ) : (
+              <div className="flex flex-col gap-2 bg-red-500">
+                {filteredOrders.length === 0 && (
+                  <div className="text-center text-2xl">No results found.</div>
+                )}
+                {filteredOrders.map((order) => (
+                  <div key={order.id}>
+                    <Link
+                      href={`/orders/${order.id}`}
+                      className="bg-yellow-500"
+                    >
+                      <span>{order.id}</span>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </TabsContent>
         <TabsContent value="customers">
-          <h2 className="text-center text-2xl">Customers</h2>
+          <h2 className="text-center text-2xl p-3">Customers</h2>
         </TabsContent>
         <TabsContent value="products">
-          <div className="flex flex-col gap-2">
-            {filteredProducts.map((product) => (
-              <Link href={`/product/${product.id}`} key={product.id}>
-                <span>{product.title}</span>
-              </Link>
-            ))}
+          <div className="flex flex-col gap-2 p-3">
+            {searchTerm === "" ? (
+              <p className="text-center text-2xl">Search anything</p>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {filteredProducts.length === 0 && (
+                  <div className="text-center text-2xl">No results found.</div>
+                )}
+                {filteredProducts.map((product) => (
+                  <Link href={`/product/${product.id}`} key={product.id}>
+                    <span>{product.title}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>

@@ -26,9 +26,7 @@ const AdminNavbar = ({ currentUser, products, orders }: AdminNavbarProps) => {
         setIsDropdownOpen(false);
       }
     };
-
     document.addEventListener("click", handleClickOutside);
-
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
@@ -58,7 +56,11 @@ const AdminNavbar = ({ currentUser, products, orders }: AdminNavbarProps) => {
             <Search className="size-5" /> Search
             {isDropdownOpen && (
               <div className="absolute bg-white w-ful -top-1 w-[510px] -left-1 h-[400px] rounded-md p-3 pt-0 overflow-y-auto">
-                <SearchMenu products={products} orders={orders} />
+                <SearchMenu
+                  products={products}
+                  orders={orders}
+                  closeDropdown={() => setIsDropdownOpen(false)}
+                />
               </div>
             )}
           </div>
