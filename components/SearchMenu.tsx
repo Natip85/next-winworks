@@ -20,7 +20,10 @@ const SearchMenu = ({ products, orders, customers }: SearchMenuProps) => {
 
   const filteredOrders = orders.filter(
     (order) =>
-      order.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.orderNumber
+        .toString()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       order.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -84,7 +87,8 @@ const SearchMenu = ({ products, orders, customers }: SearchMenuProps) => {
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <span className="font-semibold">
-                          {order?.id.substring(0, 6)}...
+                          {/* {order?.id.substring(0, 6)}... */}
+                          {order?.orderNumber}
                         </span>
                         <Badge variant={"secondary"}>
                           {order?.paymentStatus === "complete"

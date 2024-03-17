@@ -27,7 +27,8 @@ export async function POST(request: Request) {
 
   const body = await request.json();
   console.log("BODY>>>", body);
-
+  const orders = await prismadb.order.findMany();
+  const orderLength = orders.length;
   const { items, payment_intent_id } = body;
   const total = calculateOrderAmount(items) * 100;
 
@@ -46,6 +47,7 @@ export async function POST(request: Request) {
     subtotalPrice: 0,
     taxPrice: 0,
     totalDiscounts: 0,
+    orderNumber: "US" + orderLength,
   };
 
   //Check if the payment intent exists just update the order

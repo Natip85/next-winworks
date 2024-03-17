@@ -39,7 +39,7 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "id",
     cell: ({ row }) => {
       const order = row.original;
-      const orderId = order.id;
+      const orderId = order.orderNumber;
 
       return (
         <span>

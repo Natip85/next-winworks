@@ -208,7 +208,7 @@ const AddOrderForm = ({ order, products, users }: AddOrderFormProps) => {
             {order ? (
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="font-bold text-2xl">{order.id}</h2>
+                  <h2 className="font-bold text-2xl">{order.orderNumber}</h2>
                   <span>
                     <Badge variant={"outline"}>
                       {order.paymentStatus === "complete" ? "paid" : "pending"}
