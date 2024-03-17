@@ -89,6 +89,7 @@ model Variant {
 
 model Order {
   id                String @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber       String
   createdAt         DateTime @default(now())
   billingAddress    Addresses?
   email             String

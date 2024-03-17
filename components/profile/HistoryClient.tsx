@@ -39,7 +39,7 @@ const HistoryClient = ({ user }: HistoryClientProps) => {
             {user?.orders?.map((order: any) => (
               <li key={order.id} className="flex min-w-full border-b py-7">
                 <div className="flex-1 px-4 w-[150px] min-w-[150px] overflow-y-auto">
-                  {order.id}
+                  {order.orderNumber}
                 </div>
                 <div className="flex-1 px-4 w-[150px] min-w-[150px]">
                   {moment(order?.createdAt).format("MMMM Do YYYY")}

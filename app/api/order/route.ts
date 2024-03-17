@@ -4,10 +4,13 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const body = await request.json();
+  const orders = await prismadb.order.findMany();
+  const orderLength = orders.length;
 
   const order = await prismadb.order.create({
     data: {
       ...body,
+      orderNumber: "US" + orderLength,
     },
   });
 
