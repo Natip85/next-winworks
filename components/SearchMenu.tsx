@@ -1,24 +1,36 @@
 "use client";
 import { Order, Product } from "@prisma/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, User } from "lucide-react";
 import { Input } from "./ui/input";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { AiOutlineShopping } from "react-icons/ai";
+import { Badge } from "./ui/badge";
+import moment from "moment";
+import Image from "next/image";
 interface SearchMenuProps {
   products: Product[];
   orders: Order[];
-  closeDropdown: () => void;
+  customers: any;
 }
-const SearchMenu = ({ products, orders, closeDropdown }: SearchMenuProps) => {
+const SearchMenu = ({ products, orders, customers }: SearchMenuProps) => {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredOrders = orders.filter((order) =>
-    order.id.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredOrders = orders.filter(
+    (order) =>
+      order.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filteredProducts = products.filter((product) =>
     product.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const filteredCustomers = customers.filter(
+    (customer: any) =>
+      customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customer.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,20 +65,45 @@ const SearchMenu = ({ products, orders, closeDropdown }: SearchMenuProps) => {
         <TabsContent value="order">
           <div className="flex flex-col gap-2 p-3">
             {searchTerm === "" ? (
-              <p className="text-center text-2xl">Search anything</p>
+              <div className="flex flex-col items-center justify-center gap-3 p-5">
+                <Search className="size-20" />
+                <span className="text-2xl">Search all orders</span>
+              </div>
             ) : (
-              <div className="flex flex-col gap-2 bg-red-500">
+              <div className="flex flex-col">
                 {filteredOrders.length === 0 && (
                   <div className="text-center text-2xl">No results found.</div>
                 )}
                 {filteredOrders.map((order) => (
-                  <div key={order.id}>
-                    <Link
-                      href={`/orders/${order.id}`}
-                      className="bg-yellow-500"
-                    >
-                      <span>{order.id}</span>
-                    </Link>
+                  <div
+                    key={order.id}
+                    className="p-2 hover:bg-gray-200 rounded-md flex items-center gap-3"
+                    onClick={() => router.push(`/orders/${order.id}`)}
+                  >
+                    <AiOutlineShopping size={20} />
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold">
+                          {order?.id.substring(0, 6)}...
+                        </span>
+                        <Badge variant={"secondary"}>
+                          {order?.paymentStatus === "complete"
+                            ? "paid"
+                            : "pending"}
+                        </Badge>
+                        <Badge variant={"secondary"}>
+                          {order?.fulfillmentStatus}
+                        </Badge>
+                      </div>
+                      <div>
+                        <span className="flex items-center gap-1">
+                          {order.shippingAddress?.fullName}{" "}
+                          <span className="text-lg">&middot;</span>
+                          {" placed on "}
+                          {moment(order?.createdAt).format("MMMM Do YYYY")}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -74,21 +111,77 @@ const SearchMenu = ({ products, orders, closeDropdown }: SearchMenuProps) => {
           </div>
         </TabsContent>
         <TabsContent value="customers">
-          <h2 className="text-center text-2xl p-3">Customers</h2>
+          <div className="flex flex-col gap-2 p-3">
+            {searchTerm === "" ? (
+              <div className="flex flex-col items-center justify-center gap-3 p-5">
+                <Search className="size-20" />
+                <span className="text-2xl">Search all customers</span>
+              </div>
+            ) : (
+              <div className="flex flex-col">
+                {filteredCustomers.length === 0 && (
+                  <div className="text-center text-2xl">No results found.</div>
+                )}
+                {filteredCustomers.map((customer: any) => (
+                  <div
+                    key={customer?.id}
+                    className="p-2 hover:bg-gray-200 rounded-md flex items-center gap-3"
+                    onClick={() => router.push(`/customers/${customer?.id}`)}
+                  >
+                    <User className="size-5" />
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold">{customer?.name}</span>
+                      </div>
+                      <div>
+                        <span className="flex items-center gap-1">
+                          {customer?.email}{" "}
+                          <span className="text-lg">&middot;</span>
+                          {customer?.phone}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </TabsContent>
         <TabsContent value="products">
           <div className="flex flex-col gap-2 p-3">
             {searchTerm === "" ? (
-              <p className="text-center text-2xl">Search anything</p>
+              <div className="flex flex-col items-center justify-center gap-3 p-5">
+                <Search className="size-20" />
+                <span className="text-2xl">Search all products</span>
+              </div>
             ) : (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col">
                 {filteredProducts.length === 0 && (
                   <div className="text-center text-2xl">No results found.</div>
                 )}
                 {filteredProducts.map((product) => (
-                  <Link href={`/product/${product.id}`} key={product.id}>
-                    <span>{product.title}</span>
-                  </Link>
+                  <div
+                    key={product?.id}
+                    className="p-2 hover:bg-gray-200 rounded-md flex items-center gap-3"
+                    onClick={() => router.push(`/products/${product?.id}`)}
+                  >
+                    <div className="relative block overflow-hidden size-10">
+                      <Image
+                        src={product.images[0]?.url}
+                        alt={product.title}
+                        fill
+                        className="my-0 object-cover transition-[scale,filter] duration-700 rounded-md"
+                        style={{
+                          position: "absolute",
+                          height: "100%",
+                          width: "100%",
+                          inset: "0px",
+                          color: "transparent",
+                        }}
+                      />
+                    </div>
+                    <div className="font-semibold">{product.title}</div>
+                  </div>
                 ))}
               </div>
             )}

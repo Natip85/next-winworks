@@ -11,8 +11,14 @@ interface AdminNavbarProps {
   currentUser: any | null;
   products: Product[];
   orders: Order[];
+  customers: any;
 }
-const AdminNavbar = ({ currentUser, products, orders }: AdminNavbarProps) => {
+const AdminNavbar = ({
+  currentUser,
+  products,
+  orders,
+  customers,
+}: AdminNavbarProps) => {
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -51,15 +57,16 @@ const AdminNavbar = ({ currentUser, products, orders }: AdminNavbarProps) => {
           <div
             onClick={() => setIsDropdownOpen(true)}
             ref={dropdownRef}
-            className="relative hidden md:flex bg-gray-900 p-2 items-center gap-2 text-sm border border-gray-500 hover:border-gray-100 rounded-lg w-[400px] xl:w-[500px] hover:cursor-pointer text-muted-foreground"
+            className="relative hidden md:flex bg-gray-900 p-2 items-center gap-2 text-sm border border-gray-500 hover:border-gray-100 rounded-lg w-[400px] xl:w-[500px] hover:cursor-pointer "
           >
-            <Search className="size-5" /> Search
+            <Search className="size-5 text-gray-500" />
+            <span className="text-muted-foreground">Search</span>
             {isDropdownOpen && (
-              <div className="absolute bg-white w-ful -top-1 w-[510px] -left-1 h-[400px] rounded-md p-3 pt-0 overflow-y-auto">
+              <div className="absolute bg-white w-ful -top-1 w-[600px] -left-1 h-[300px] rounded-md p-3 pt-0 overflow-y-auto shadow-md">
                 <SearchMenu
                   products={products}
                   orders={orders}
-                  closeDropdown={() => setIsDropdownOpen(false)}
+                  customers={customers}
                 />
               </div>
             )}

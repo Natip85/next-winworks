@@ -9,6 +9,7 @@ import AdminNavbar from "@/components/nav/AdminNavbar";
 import Bottombar from "@/components/nav/Bottombar";
 import getProducts from "@/actions/getProducts";
 import getOrders from "@/actions/getOrders";
+import getAllUsers from "@/actions/getAllUsers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,7 @@ export default async function RootLayout({
   const currentUser = await getCurrentUser();
   const products = await getProducts();
   const orders = await getOrders();
+  const customers = await getAllUsers();
   return (
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning>
@@ -35,6 +37,7 @@ export default async function RootLayout({
             currentUser={currentUser}
             products={products}
             orders={orders}
+            customers={customers}
           />
           <main className="flex flex-row">
             <Sidebar />
