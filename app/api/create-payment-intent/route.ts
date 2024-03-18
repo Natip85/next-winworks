@@ -26,7 +26,6 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  console.log("BODY>>>", body);
   const orders = await prismadb.order.findMany();
   const orderLength = orders.length;
   const { items, payment_intent_id } = body;

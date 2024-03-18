@@ -6,8 +6,6 @@ interface HistoryClientProps {
   user: any;
 }
 const HistoryClient = ({ user }: HistoryClientProps) => {
-  console.log("USER>>", user);
-
   return (
     <div>
       {user.orders.length === 0 && (

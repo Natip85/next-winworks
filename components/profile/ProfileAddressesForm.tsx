@@ -55,7 +55,6 @@ const ProfileAddressesForm = ({ user }: ProfileAddressesFormProps) => {
     });
 
     function onSubmit(values: z.infer<typeof createCustomerFormSchema>) {
-      console.log("VALUES>>>", values);
       setIsLoading(true);
 
       if (user) {

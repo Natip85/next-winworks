@@ -28,7 +28,6 @@ const ProfileDetailsForm = ({ user }: ProfileDetailsFormProps) => {
   const { toast } = useToast();
   const [openForm, setOpenForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  console.log("USERDETAILS>>>", user);
 
   const useDynamicForm = () => {
     const form = useForm<z.infer<typeof createCustomerFormSchema>>({
@@ -60,7 +59,6 @@ const ProfileDetailsForm = ({ user }: ProfileDetailsFormProps) => {
     });
 
     function onSubmit(values: z.infer<typeof createCustomerFormSchema>) {
-      console.log("SUBMITEDDETAILS>>>", values);
       setIsLoading(true);
 
       if (user) {

@@ -46,7 +46,6 @@ export default async function handler(
     //   break;
     case "charge.succeeded":
       const charge: any = event.data.object as Stripe.Charge;
-      console.log("CHARGE>>>", charge);
 
       if (typeof charge.payment_intent === "string") {
         finalAddress = {

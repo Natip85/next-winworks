@@ -1,8 +1,6 @@
 import prismadb from "@/lib/prismadb";
 
 export default async function getAllUsers() {
-  console.log("test");
-
   try {
     const users = await prismadb.user.findMany({
       include: {

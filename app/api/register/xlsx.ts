@@ -11,18 +11,11 @@ export function downloadToExcel(data: any) {
         { label: "Orders", value: "orders" },
         { label: "Amount spent", value: "totalSpent" },
       ],
-      content: data.map(
-        (customer: any) => (
-          console.log("CUSTOMER>>>", customer),
-          {
-            ...customer,
-            orders: customer.orders.length,
-            totalSpent: customer.orders.map((order: any) =>
-              console.log("THIS?", order.totalPrice / 100)
-            ),
-          }
-        )
-      ),
+      content: data.map((customer: any) => ({
+        ...customer,
+        orders: customer.orders.length,
+        totalSpent: customer.orders.map((order: any) => order),
+      })),
     },
   ];
 
