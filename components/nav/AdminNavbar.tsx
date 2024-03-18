@@ -50,7 +50,9 @@ const AdminNavbar = ({
               height="30"
               className="aspect-square"
             />
-            <div className={"font-bold text-xl  text-white"}>NextWinWorks</div>
+            <div className="font-bold text-xl text-white hidden sm:block">
+              NextWinWorks
+            </div>
           </div>
           <div className="sm:hidden">
             <Drawer open={openSearch2} onOpenChange={setOpenSearch2}>
