@@ -8,7 +8,17 @@ import SearchMenu from "../SearchMenu";
 import { Order, Product } from "@prisma/client";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 interface AdminNavbarProps {
   currentUser: any | null;
   products: Product[];
@@ -41,9 +51,45 @@ const AdminNavbar = ({
             />
             <div className={"font-bold text-xl  text-white"}>NextWinWorks</div>
           </div>
-          <div className="hidden md:flex">
+          <div className="sm:hidden">
+            <Drawer>
+              <DrawerTrigger
+                className="flex items-center gap-1 justify-start border border-gray-500 hover:border-gray-100 text-muted-foreground rounded-md p-1"
+                asChild
+              >
+                <Button
+                  variant={"link"}
+                  size={"sm"}
+                  className="flex items-center gap-1 justify-start border border-gray-500 hover:border-gray-100 text-muted-foreground hover:no-underline px-3"
+                >
+                  <Search className="size-4" /> Search
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent className="p-3">
+                <div>
+                  <div className="flex items-center justify-end">
+                    <DrawerClose>
+                      <Button variant="outline" size={"xs"}>
+                        <X />
+                      </Button>
+                    </DrawerClose>
+                  </div>
+                  <SearchMenu
+                    products={products}
+                    orders={orders}
+                    customers={customers}
+                    onClose={() => setOpenSearch(false)}
+                  />
+                </div>
+              </DrawerContent>
+            </Drawer>
+          </div>
+          <div className="hidden sm:flex">
             <Popover open={openSearch} onOpenChange={setOpenSearch}>
-              <PopoverTrigger asChild className="w-[400px] xl:w-[500px]">
+              <PopoverTrigger
+                asChild
+                className="w-[200px] md:w-[400px] xl:w-[500px]"
+              >
                 <Button
                   variant={"link"}
                   className="flex items-center gap-3 justify-start border border-gray-500 hover:border-gray-100 text-muted-foreground hover:no-underline"
