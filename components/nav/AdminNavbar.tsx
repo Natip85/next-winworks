@@ -33,6 +33,7 @@ const AdminNavbar = ({
 }: AdminNavbarProps) => {
   const router = useRouter();
   const [openSearch, setOpenSearch] = useState(false);
+  const [openSearch2, setOpenSearch2] = useState(false);
 
   return (
     <div className="fixed z-50 top-0 right-0 left-0 bg-black">
@@ -52,7 +53,7 @@ const AdminNavbar = ({
             <div className={"font-bold text-xl  text-white"}>NextWinWorks</div>
           </div>
           <div className="sm:hidden">
-            <Drawer>
+            <Drawer open={openSearch2} onOpenChange={setOpenSearch2}>
               <DrawerTrigger
                 className="flex items-center gap-1 justify-start border border-gray-500 hover:border-gray-100 text-muted-foreground rounded-md p-1"
                 asChild
@@ -78,7 +79,7 @@ const AdminNavbar = ({
                     products={products}
                     orders={orders}
                     customers={customers}
-                    onClose={() => setOpenSearch(false)}
+                    onClose={() => setOpenSearch2(false)}
                   />
                 </div>
               </DrawerContent>
