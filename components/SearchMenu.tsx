@@ -13,8 +13,14 @@ interface SearchMenuProps {
   products: Product[];
   orders: Order[];
   customers: any;
+  onClose: () => void;
 }
-const SearchMenu = ({ products, orders, customers }: SearchMenuProps) => {
+const SearchMenu = ({
+  products,
+  orders,
+  customers,
+  onClose,
+}: SearchMenuProps) => {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -65,7 +71,7 @@ const SearchMenu = ({ products, orders, customers }: SearchMenuProps) => {
             Products
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="order">
+        <TabsContent value="order" className="h-[300px] overflow-y-auto">
           <div className="flex flex-col gap-2 p-3">
             {searchTerm === "" ? (
               <div className="flex flex-col items-center justify-center gap-3 p-5">
@@ -80,8 +86,13 @@ const SearchMenu = ({ products, orders, customers }: SearchMenuProps) => {
                 {filteredOrders.map((order) => (
                   <div
                     key={order.id}
-                    className="p-2 hover:bg-gray-200 rounded-md flex items-center gap-3"
-                    onClick={() => router.push(`/orders/${order.id}`)}
+                    className="hover:cursor-pointer p-2 hover:bg-gray-200 rounded-md flex items-center gap-3"
+                    onClick={() => {
+                      router.push(`/orders/${order.id}`);
+                      if (onClose) {
+                        onClose();
+                      }
+                    }}
                   >
                     <AiOutlineShopping size={20} />
                     <div className="flex flex-col gap-1">
@@ -114,7 +125,7 @@ const SearchMenu = ({ products, orders, customers }: SearchMenuProps) => {
             )}
           </div>
         </TabsContent>
-        <TabsContent value="customers">
+        <TabsContent value="customers" className="h-[300px] overflow-y-auto">
           <div className="flex flex-col gap-2 p-3">
             {searchTerm === "" ? (
               <div className="flex flex-col items-center justify-center gap-3 p-5">
@@ -129,8 +140,13 @@ const SearchMenu = ({ products, orders, customers }: SearchMenuProps) => {
                 {filteredCustomers.map((customer: any) => (
                   <div
                     key={customer?.id}
-                    className="p-2 hover:bg-gray-200 rounded-md flex items-center gap-3"
-                    onClick={() => router.push(`/customers/${customer?.id}`)}
+                    className="hover:cursor-pointer p-2 hover:bg-gray-200 rounded-md flex items-center gap-3"
+                    onClick={() => {
+                      router.push(`/customers/${customer?.id}`);
+                      if (onClose) {
+                        onClose();
+                      }
+                    }}
                   >
                     <User className="size-5" />
                     <div className="flex flex-col gap-1">
@@ -151,7 +167,7 @@ const SearchMenu = ({ products, orders, customers }: SearchMenuProps) => {
             )}
           </div>
         </TabsContent>
-        <TabsContent value="products">
+        <TabsContent value="products" className="h-[300px] overflow-y-auto">
           <div className="flex flex-col gap-2 p-3">
             {searchTerm === "" ? (
               <div className="flex flex-col items-center justify-center gap-3 p-5">
@@ -166,8 +182,13 @@ const SearchMenu = ({ products, orders, customers }: SearchMenuProps) => {
                 {filteredProducts.map((product) => (
                   <div
                     key={product?.id}
-                    className="p-2 hover:bg-gray-200 rounded-md flex items-center gap-3"
-                    onClick={() => router.push(`/products/${product?.id}`)}
+                    className="hover:cursor-pointer p-2 hover:bg-gray-200 rounded-md flex items-center gap-3"
+                    onClick={() => {
+                      router.push(`/products/${product?.id}`);
+                      if (onClose) {
+                        onClose();
+                      }
+                    }}
                   >
                     <div className="relative block overflow-hidden size-10">
                       <Image

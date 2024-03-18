@@ -3,10 +3,12 @@ import Image from "next/image";
 import NavMenu from "./NavMenu";
 import { useRouter } from "next/navigation";
 import Container from "../Container";
-import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import SearchMenu from "../SearchMenu";
 import { Order, Product } from "@prisma/client";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "../ui/button";
+import { Search } from "lucide-react";
 interface AdminNavbarProps {
   currentUser: any | null;
   products: Product[];
@@ -20,23 +22,8 @@ const AdminNavbar = ({
   customers,
 }: AdminNavbarProps) => {
   const router = useRouter();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [openSearch, setOpenSearch] = useState(false);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
   return (
     <div className="fixed z-50 top-0 right-0 left-0 bg-black">
       <Container>
@@ -54,22 +41,25 @@ const AdminNavbar = ({
             />
             <div className={"font-bold text-xl  text-white"}>NextWinWorks</div>
           </div>
-          <div
-            onClick={() => setIsDropdownOpen(true)}
-            ref={dropdownRef}
-            className="relative hidden md:flex bg-gray-900 p-2 items-center gap-2 text-sm border border-gray-500 hover:border-gray-100 rounded-lg w-[400px] xl:w-[500px] hover:cursor-pointer "
-          >
-            <Search className="size-5 text-gray-500" />
-            <span className="text-muted-foreground">Search</span>
-            {isDropdownOpen && (
-              <div className="absolute bg-white w-ful -top-1 w-[600px] -left-1 h-[300px] rounded-md p-3 pt-0 overflow-y-auto shadow-md">
+          <div className="hidden md:flex">
+            <Popover open={openSearch} onOpenChange={setOpenSearch}>
+              <PopoverTrigger asChild className="w-[400px] xl:w-[500px]">
+                <Button
+                  variant={"link"}
+                  className="flex items-center gap-3 justify-start border border-gray-500 hover:border-gray-100 text-muted-foreground hover:no-underline"
+                >
+                  <Search className="size-4" /> <span>Search</span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[400px] xl:w-[500px]">
                 <SearchMenu
                   products={products}
                   orders={orders}
                   customers={customers}
+                  onClose={() => setOpenSearch(false)}
                 />
-              </div>
-            )}
+              </PopoverContent>
+            </Popover>
           </div>
           <div className="flex items-center justify-between">
             <div>
