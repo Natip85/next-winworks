@@ -29,8 +29,14 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search } from "lucide-react";
+import { MoreHorizontal, Search, Trash2 } from "lucide-react";
 import { downloadToExcel } from "@/app/api/product/xlsx";
+import { Separator } from "../ui/separator";
+import Modal from "../Modal";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import axios from "axios";
+import { toast, useToast } from "../ui/use-toast";
+import { useRouter } from "next/navigation";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -44,7 +50,8 @@ function ProductTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [showSearch, setShowSearch] = useState(false);
-
+  const { toast } = useToast();
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const table = useReactTable({
@@ -73,17 +80,31 @@ function ProductTable<TData, TValue>({
     }
   }, [showSearch]);
 
+  const handleProductDelete = async (value: string[]) => {
+    try {
+      await axios
+        .delete("/api/product/deletemany", {
+          data: { productIds: value },
+        })
+        .then((res) => {
+          toast({
+            variant: "success",
+            description:
+              table.getFilteredSelectedRowModel().rows.length > 1
+                ? "Products deleted"
+                : "Product deleted",
+          });
+          window.location.reload();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {
+      console.error("Error deleting products:", error);
+    }
+  };
   return (
     <div className="m-auto max-w-[380px] sm:max-w-[600px] lg:max-w-full">
-      <div>
-        {/* <Button
-          onClick={() => downloadToExcel(data)}
-          className="sm:ml-4 h-fit w-fit text-sm text-white py-1 px-3 bg-black mb-3"
-        >
-          Export to Excel
-        </Button> */}
-      </div>
-
       <div>
         <div className="bg-white p-2 rounded-tl-lg rounded-tr-lg border-[1px] border-slate-300 border-b-0 shadow-md transition">
           {showSearch ? (
@@ -193,7 +214,60 @@ function ProductTable<TData, TValue>({
             </div>
           )}
         </div>
+
         <div className="bg-white overflow-hidden border-[1px] border-t-0 border-slate-300 shadow-md rounded-b-lg mb-3">
+          {table.getFilteredSelectedRowModel().rows.length > 0 && (
+            <div className="p-2 text-sm text-muted-foreground">
+              <Separator className="mb-2" />
+              <div className="flex items-center justify-between">
+                <span>
+                  {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                  {table.getFilteredRowModel().rows.length} row(s) selected
+                </span>
+                <span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        size={"xs"}
+                        className="shadow-md"
+                      >
+                        <MoreHorizontal className="size-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <Modal
+                        onConfirm={() =>
+                          handleProductDelete(
+                            table
+                              .getFilteredSelectedRowModel()
+                              .rows.map((row: any) => row.original.id)
+                          )
+                        }
+                        icon={<Trash2 className="size-4 mr-2" />}
+                        triggerTitle={
+                          table.getFilteredSelectedRowModel().rows.length > 1
+                            ? "Delete products"
+                            : "delete product"
+                        }
+                        cancelTitle="Cancel"
+                        confirmTitle={
+                          table.getFilteredSelectedRowModel().rows.length > 1
+                            ? "Delete products"
+                            : "delete product"
+                        }
+                        title={`Remove ${
+                          table.getFilteredSelectedRowModel().rows.length
+                        } products?`}
+                        description="This can't be undone."
+                        btnClasses="w-full text-sm flex items-center"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </span>
+              </div>
+            </div>
+          )}
           <Table className="bg-white p-5">
             <TableHeader className="bg-gray-100 p-5">
               {table.getHeaderGroups().map((headerGroup) => {
