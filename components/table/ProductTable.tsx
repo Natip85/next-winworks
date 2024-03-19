@@ -80,11 +80,14 @@ function ProductTable<TData, TValue>({
     }
   }, [showSearch]);
 
-  const handleProductDelete = async (value: string[]) => {
+  const handleProductDelete = async (value: any) => {
     try {
+      const idsToDelete = value.map((prod: any) => {
+        return prod.id;
+      });
       await axios
         .delete("/api/product/deletemany", {
-          data: { productIds: value },
+          data: { productIds: idsToDelete },
         })
         .then((res) => {
           toast({
@@ -99,6 +102,15 @@ function ProductTable<TData, TValue>({
         .catch((err) => {
           console.log(err);
         });
+      const imageKeys: string[] = [];
+
+      value.forEach((prod: any) => {
+        prod.images.forEach((imgKey: any) => {
+          imageKeys.push(imgKey.key);
+        });
+      });
+
+      await axios.post("/api/uploadthing/delete", { imageKeys: [imageKeys] });
     } catch (error) {
       console.error("Error deleting products:", error);
     }
@@ -241,7 +253,7 @@ function ProductTable<TData, TValue>({
                           handleProductDelete(
                             table
                               .getFilteredSelectedRowModel()
-                              .rows.map((row: any) => row.original.id)
+                              .rows.map((row: any) => row.original)
                           )
                         }
                         icon={<Trash2 className="size-4 mr-2" />}

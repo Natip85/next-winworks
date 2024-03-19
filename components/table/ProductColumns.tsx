@@ -3,15 +3,6 @@ import Modal from "@/components/Modal";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -98,7 +89,7 @@ export const columns: ColumnDef<Product>[] = [
       return (
         <Link
           href={`/products/${productId}`}
-          className="font-bold hover:underline "
+          className="font-bold hover:underline"
         >
           {allTitles}
         </Link>
