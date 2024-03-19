@@ -19,6 +19,7 @@ import {
   Loader2Icon,
   Pencil,
   PencilLine,
+  Trash2,
 } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { usePathname, useRouter } from "next/navigation";
@@ -59,6 +60,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import Link from "next/link";
+import Modal from "../Modal";
 
 interface AddCustomerFormProps {
   user: any;
@@ -210,6 +212,23 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
     });
     const formattedTotalPriceSum = totalPrice / 100;
     return formatPrice(formattedTotalPriceSum);
+  };
+  const handleCustomerDelete = async (customerId: string) => {
+    try {
+      await axios.delete(`/api/register/${customerId}`).then((res) => {
+        toast({
+          variant: "success",
+          description: "Customer deleted",
+        });
+      });
+      router.push("/customers");
+    } catch (error: any) {
+      console.log(error);
+      toast({
+        variant: "destructive",
+        description: `Product deletion could not be completed ${error.message}`,
+      });
+    }
   };
   return (
     <div className="flex flex-col max-w-[950px] gap-3 mx-auto">
@@ -600,114 +619,131 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
           </Form>
         </>
       ) : (
-        <div className="flex flex-col md:flex-row">
-          <div className="flex-1 md:mr-5">
-            <div className="flex gap-3 rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
-              <div className="border-r-2 w-fit flex">
-                <span className="flex items-center gap-2 text-sm mr-5 text-muted-foreground">
-                  <AiOutlineShopping className="size-4 " />
-                  All time
-                </span>
+        <>
+          <div className="flex flex-col md:flex-row">
+            <div className="flex-1 md:mr-5">
+              <div className="flex gap-3 rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
+                <div className="border-r-2 w-fit flex">
+                  <span className="flex items-center gap-2 text-sm mr-5 text-muted-foreground">
+                    <AiOutlineShopping className="size-4 " />
+                    All time
+                  </span>
+                </div>
+                <div className="w-1/3 flex flex-col justify-center items-center border-r-2">
+                  <span className="font-normal text-xs">Amount spent</span>
+                  <span className="font-semibold text-sm">
+                    {calculateTotalOrderPrice(user)}
+                  </span>
+                </div>
+                <div className="w-1/3 flex flex-col justify-center items-center">
+                  <span className="font-normal text-xs">
+                    {user.orders.length > 0 ? "orders" : "order"}
+                  </span>
+                  <span className="font-semibold text-sm">
+                    {user.orders.length}
+                  </span>
+                </div>
               </div>
-              <div className="w-1/3 flex flex-col justify-center items-center border-r-2">
-                <span className="font-normal text-xs">Amount spent</span>
-                <span className="font-semibold text-sm">
-                  {calculateTotalOrderPrice(user)}
-                </span>
-              </div>
-              <div className="w-1/3 flex flex-col justify-center items-center">
-                <span className="font-normal text-xs">
-                  {user.orders.length > 0 ? "orders" : "order"}
-                </span>
-                <span className="font-semibold text-sm">
-                  {user.orders.length}
-                </span>
-              </div>
-            </div>
-            <div className="flex flex-col rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
-              <h2 className="font-semibold mb-3">Last order placed</h2>
-              {user.orders.length > 0 ? (
-                <div>
-                  <div className="p-3 border border-b-0">
-                    <div className="flex justify-between items-center">
-                      <div className="w-3/4 flex gap-3 items-center">
-                        <span>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Link href={""}>
-                                  <span className="text-sm font-semibold hover:cursor-pointer hover:underline">
-                                    {user.orders[0]?.id.substring(0, 6)}
-                                    ...
-                                  </span>
-                                </Link>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{user.orders[user.orders.length - 1]?.id}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </span>
-                        <span>
-                          <Badge
-                            variant={
-                              user.orders[user.orders.length - 1]
+              <div className="flex flex-col rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
+                <h2 className="font-semibold mb-3">Last order placed</h2>
+                {user.orders.length > 0 ? (
+                  <div>
+                    <div className="p-3 border border-b-0">
+                      <div className="flex justify-between items-center">
+                        <div className="w-3/4 flex gap-3 items-center">
+                          <span>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Link href={""}>
+                                    <span className="text-sm font-semibold hover:cursor-pointer hover:underline">
+                                      {user.orders[0]?.id.substring(0, 6)}
+                                      ...
+                                    </span>
+                                  </Link>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>
+                                    {user.orders[user.orders.length - 1]?.id}
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </span>
+                          <span>
+                            <Badge
+                              variant={
+                                user.orders[user.orders.length - 1]
+                                  ?.paymentStatus === "complete"
+                                  ? "success"
+                                  : "secondary"
+                              }
+                            >
+                              {user.orders[user.orders.length - 1]
                                 ?.paymentStatus === "complete"
-                                ? "success"
-                                : "secondary"
-                            }
-                          >
-                            {user.orders[user.orders.length - 1]
-                              ?.paymentStatus === "complete"
-                              ? "paid"
-                              : "pending"}
-                          </Badge>
-                        </span>
-                        <span>
-                          <Badge>
-                            {
-                              user.orders[user.orders.length - 1]
-                                ?.fulfillmentStatus
-                            }
-                          </Badge>
-                        </span>
+                                ? "paid"
+                                : "pending"}
+                            </Badge>
+                          </span>
+                          <span>
+                            <Badge>
+                              {
+                                user.orders[user.orders.length - 1]
+                                  ?.fulfillmentStatus
+                              }
+                            </Badge>
+                          </span>
+                        </div>
+                        <div>
+                          {formatPrice(
+                            user.orders[user.orders.length - 1]?.totalPrice /
+                              100
+                          )}
+                        </div>
                       </div>
                       <div>
-                        {formatPrice(
-                          user.orders[user.orders.length - 1]?.totalPrice / 100
-                        )}
+                        {moment(
+                          user.orders[user.orders.length - 1]?.createdAt
+                        ).format("MMMM Do YYYY, h:mm:ss a")}
                       </div>
                     </div>
-                    <div>
-                      {moment(
-                        user.orders[user.orders.length - 1]?.createdAt
-                      ).format("MMMM Do YYYY, h:mm:ss a")}
+                    {user.orders[0]?.products.map((product: any) => (
+                      <div
+                        key={product.id}
+                        className="border flex justify-between p-3"
+                      >
+                        <div className="w-3/4 flex gap-3">
+                          <span className="relative aspect-video size-14">
+                            <Image
+                              src={product.images[0].url}
+                              alt={product.title}
+                              fill
+                              sizes="30"
+                              className="object-cover rounded-md"
+                            />
+                          </span>
+                          <span>{product.title}</span>
+                        </div>
+                        <div className="flex-1 flex justify-between">
+                          <span>X{product.quantity}</span>
+                          <span>{formatPrice(product.price)}</span>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex items-center justify-end mt-5">
+                      <Button
+                        onClick={() => router.push("/orders/new")}
+                        size={"sm"}
+                      >
+                        Create order
+                      </Button>
                     </div>
                   </div>
-                  {user.orders[0]?.products.map((product: any) => (
-                    <div
-                      key={product.id}
-                      className="border flex justify-between p-3"
-                    >
-                      <div className="w-3/4 flex gap-3">
-                        <span className="relative aspect-video size-14">
-                          <Image
-                            src={product.images[0].url}
-                            alt={product.title}
-                            fill
-                            sizes="30"
-                            className="object-cover rounded-md"
-                          />
-                        </span>
-                        <span>{product.title}</span>
-                      </div>
-                      <div className="flex-1 flex justify-between">
-                        <span>X{product.quantity}</span>
-                        <span>{formatPrice(product.price)}</span>
-                      </div>
+                ) : (
+                  <div>
+                    <div className="text-sm text-muted-foreground mb-3">
+                      This customer hasn’t placed any orders yet
                     </div>
-                  ))}
-                  <div className="flex items-center justify-end mt-5">
                     <Button
                       onClick={() => router.push("/orders/new")}
                       size={"sm"}
@@ -715,82 +751,82 @@ const AddCustomerForm = ({ user }: AddCustomerFormProps) => {
                       Create order
                     </Button>
                   </div>
-                </div>
-              ) : (
-                <div>
-                  <div className="text-sm text-muted-foreground mb-3">
-                    This customer hasn’t placed any orders yet
-                  </div>
-                  <Button
-                    onClick={() => router.push("/orders/new")}
-                    size={"sm"}
-                  >
-                    Create order
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="md:w-1/3">
-            <div className="flex flex-col gap-3 rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="font-semibold">Customer</h2>
-                <span>
-                  <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild>
-                      <Button size={"xs"} type="button" variant={"ghost"}>
-                        <Edit3Icon className="size-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-gray-200 max-w-[900px] w-[90%] p-0 overflow-hidden">
-                      <DialogHeader className="px-2">
-                        <DialogTitle className="pt-3">
-                          Edit customer
-                        </DialogTitle>
-                      </DialogHeader>
-                      <EditCustomerForm
-                        user={user}
-                        handleDialogOpen={handleDialogOpen}
-                      />
-                    </DialogContent>
-                  </Dialog>
-                </span>
+                )}
               </div>
+            </div>
+            <div className="md:w-1/3">
+              <div className="flex flex-col gap-3 rounded-lg overflow-hidden bg-white p-4 border-2 border-gray-200 shadow-lg mb-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="font-semibold">Customer</h2>
+                  <span>
+                    <Dialog open={open} onOpenChange={setOpen}>
+                      <DialogTrigger asChild>
+                        <Button size={"xs"} type="button" variant={"ghost"}>
+                          <Edit3Icon className="size-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-gray-200 max-w-[900px] w-[90%] p-0 overflow-hidden">
+                        <DialogHeader className="px-2">
+                          <DialogTitle className="pt-3">
+                            Edit customer
+                          </DialogTitle>
+                        </DialogHeader>
+                        <EditCustomerForm
+                          user={user}
+                          handleDialogOpen={handleDialogOpen}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </span>
+                </div>
 
-              <h4 className="font-semibold text-sm">Contact information</h4>
-              <div className="flex   items-center justify-between text-sm mb-3">
-                <span className="w-[90%] break-all">{user.email}</span>
-                <span>
-                  <Clipboard
-                    className="size-4 hover:cursor-pointer"
-                    onClick={handleCopyEmail}
-                  />
-                </span>
-              </div>
-              <h4 className="font-semibold text-sm">Address</h4>
-              <div className="flex flex-col">
-                <span className="font-normal text-sm">
-                  {user.addresses[0]?.firstName +
-                    " " +
-                    user.addresses[0]?.lastName}
-                </span>
-                <span className="font-normal text-sm">
-                  {user.addresses[0]?.line1}
-                </span>
-                <span className="font-normal text-sm">
-                  {user.addresses[0]?.city}, {user.addresses[0]?.state},{" "}
-                  {user.addresses[0]?.postal_code}
-                </span>
-                <span className="font-normal text-sm">
-                  {user.addresses[0]?.country}
-                </span>
-                <span className="font-normal text-sm">
-                  {user.addresses[0]?.phone}
-                </span>
+                <h4 className="font-semibold text-sm">Contact information</h4>
+                <div className="flex   items-center justify-between text-sm mb-3">
+                  <span className="w-[90%] break-all">{user.email}</span>
+                  <span>
+                    <Clipboard
+                      className="size-4 hover:cursor-pointer"
+                      onClick={handleCopyEmail}
+                    />
+                  </span>
+                </div>
+                <h4 className="font-semibold text-sm">Address</h4>
+                <div className="flex flex-col">
+                  <span className="font-normal text-sm">
+                    {user.addresses[0]?.firstName +
+                      " " +
+                      user.addresses[0]?.lastName}
+                  </span>
+                  <span className="font-normal text-sm">
+                    {user.addresses[0]?.line1}
+                  </span>
+                  <span className="font-normal text-sm">
+                    {user.addresses[0]?.city}, {user.addresses[0]?.state},{" "}
+                    {user.addresses[0]?.postal_code}
+                  </span>
+                  <span className="font-normal text-sm">
+                    {user.addresses[0]?.country}
+                  </span>
+                  <span className="font-normal text-sm">
+                    {user.addresses[0]?.phone}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+          <div className="flex justify-end">
+            <Modal
+              onConfirm={() => handleCustomerDelete(user.id)}
+              icon={<Trash2 className="h-4 w-4 mr-2" />}
+              triggerTitle="Delete customer"
+              cancelTitle="Cancel"
+              confirmTitle="Delete customer"
+              title={`Delete ${user.name}?`}
+              description={`Are you sure you want to delete ${user.name}? This can't be undone.`}
+              btnClasses="bg-destructive hover:bg-rose-800 h-[30px] rounded-lg px-2 text-white text-sm flex items-center"
+            />
+          </div>
+        </>
       )}
     </div>
   );
