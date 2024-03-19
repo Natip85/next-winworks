@@ -29,3 +29,23 @@ export async function PATCH(
     return new NextResponse("Internal server error", { status: 500 });
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { registerId: string } }
+) {
+  try {
+    if (!params.registerId) {
+      return new NextResponse("customerId is required", { status: 400 });
+    }
+    const customer = await prismadb.user.delete({
+      where: {
+        id: params.registerId,
+      },
+    });
+    return NextResponse.json(customer);
+  } catch (error) {
+    console.log("Error at /api/register/registerId DELETE", error);
+    return new NextResponse("Internal server error", { status: 500 });
+  }
+}

@@ -35,7 +35,7 @@ import { Separator } from "../ui/separator";
 import Modal from "../Modal";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import axios from "axios";
-import { toast, useToast } from "../ui/use-toast";
+import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

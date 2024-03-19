@@ -72,7 +72,14 @@ function UserTable<TData, TValue>({
       inputRef.current.focus();
     }
   }, [showSearch]);
+  const handleCustomerDelete = async (value: any) => {
+    console.log("VALUE>>>", value);
 
+    try {
+    } catch (error) {
+      console.error("Error deleting products:", error);
+    }
+  };
   return (
     <div className="m-auto max-w-[380px] sm:max-w-[600px] lg:max-w-full">
       <div>
